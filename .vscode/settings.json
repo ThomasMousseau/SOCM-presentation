@@ -1,83 +1,83 @@
 {
-    // "latex-workshop.latex.tools": [
-    //     {
-    //         "name": "latexmk",
-    //         "command": "/Library/TeX/texbin/latexmk",
-    //         "args": [
-    //             "-synctex=1",
-    //             "-interaction=nonstopmode",
-    //             "-file-line-error",
-    //             "-pdf",
-    //             "-outdir=%OUTDIR%",
-    //             "%DOC%"
-    //         ],
-    //         "env": {}
-    //     },
-    //     {
-    //         "name": "xelatex",
-    //         "command": "/Library/TeX/texbin/xelatex",
-    //         "args": [
-    //             "-synctex=1",
-    //             "-interaction=nonstopmode",
-    //             "-file-line-error",
-    //             "%DOC%"
-    //         ],
-    //         "env": {}
-    //     },
-    //     {
-    //         "name": "pdflatex",
-    //         "command": "/Library/TeX/texbin/pdflatex",
-    //         "args": [
-    //             "-synctex=1",
-    //             "-interaction=nonstopmode",
-    //             "-file-line-error",
-    //             "%DOC%"
-    //         ],
-    //         "env": {}
-    //     },
-    //     {
-    //         "name": "bibtex",
-    //         "command": "/Library/TeX/texbin/bibtex",
-    //         "args": [
-    //             "%DOCFILE%"
-    //         ],
-    //         "env": {}
-    //     }
-    // ],
+    "latex-workshop.latex.tools": [
+        {
+            "name": "latexmk",
+            "command": "/Library/TeX/texbin/latexmk",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-pdf",
+                "%DOC%"
+            ],
+            "env": {}
+        },
+        {
+            "name": "xelatex",
+            "command": "/Library/TeX/texbin/xelatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ],
+            "env": {}
+        },
+        {
+            "name": "pdflatex",
+            "command": "/Library/TeX/texbin/pdflatex",
+            "args": [
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ],
+            "env": {}
+        },
+        {
+            "name": "bibtex",
+            "command": "/Library/TeX/texbin/bibtex",
+            "args": [
+                "%DOCFILE%"
+            ],
+            "env": {}
+        }
+    ],
     "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk 🔃",
+            "tools": [
+                "latexmk"
+            ]
+        },
         {
             "name": "pdfLaTeX",
             "tools": [
                 "pdflatex"
             ]
         },
-        // {
-        //     "name": "latexmk 🔃",
-        //     "tools": [
-        //         "latexmk"
-        //     ]
-        // },
-        // {
-        //     "name": "xelatex",
-        //     "tools": [
-        //         "xelatex"
-        //     ]
-        // },
-        // {
-        //     "name": "pdflatex ➞ bibtex ➞ pdflatex×2",
-        //     "tools": [
-        //         "pdflatex",
-        //         "bibtex",
-        //         "pdflatex",
-        //         "pdflatex"
-        //     ]
-        // }
+        {
+            "name": "pdflatex ➞ bibtex ➞ pdflatex×2",
+            "tools": [
+                "pdflatex",
+                "bibtex",
+                "pdflatex",
+                "pdflatex"
+            ]
+        }
     ],
     "latex-workshop.view.pdf.viewer": "tab",
-    "latex-workshop.view.pdf.internal.synctex.keybinding": "ctrl-click",
+    "latex-workshop.view.pdf.internal.synctex.keybinding": "double-click",
     "latex-workshop.latex.autoBuild.run": "onSave",
-    "latex-workshop.view.pdf.internal.port": 12345,
+    "latex-workshop.latex.autoBuild.delay": 1000,
+    "latex-workshop.latex.autoClean.run": "onBuilt",
+    "latex-workshop.view.pdf.internal.port": 0,
     "latex-workshop.synctex.afterBuild.enabled": true,
-    "latex-workshop.view.pdf.internal.viewer.keepfocus": false,
+    "latex-workshop.view.pdf.internal.viewer.keepfocus": true,
     "latex-workshop.view.pdf.internal.zoom": "page-width",
+    "latex-workshop.view.pdf.refresh.enabled": true,
+    "latex-workshop.view.pdf.refresh.delay": 100,
+    "latex-workshop.latex.watch.enabled": true,
+    "latex-workshop.latex.outDir": "./",
+    "latex-workshop.view.pdf.hand": true
 }
