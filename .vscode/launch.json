@@ -1,0 +1,53 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Train Base LSTM",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/run_exp.py",
+            "args": [
+                "--model", "lstm",
+                "--log_dir", "logs/lstm",
+                "--n_steps", "20",
+                "--optimizer", "adamw",
+                "--train_batch_size", "512",
+                "--dropout" , "0.0",
+                "--exp_name", "DEBUG_ACC",
+                // "--operation_orders", "2", "3"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Train Base GPT",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/run_exp.py",
+            "args": [
+                "--model", "gpt",
+                "--log_dir", "logs/gpt",
+                "--n_steps", "20",
+
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Checkpointing",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/checkpointing.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Plot graphs",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/utils.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

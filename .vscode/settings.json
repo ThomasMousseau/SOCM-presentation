@@ -1,0 +1,83 @@
+{
+    // "latex-workshop.latex.tools": [
+    //     {
+    //         "name": "latexmk",
+    //         "command": "/Library/TeX/texbin/latexmk",
+    //         "args": [
+    //             "-synctex=1",
+    //             "-interaction=nonstopmode",
+    //             "-file-line-error",
+    //             "-pdf",
+    //             "-outdir=%OUTDIR%",
+    //             "%DOC%"
+    //         ],
+    //         "env": {}
+    //     },
+    //     {
+    //         "name": "xelatex",
+    //         "command": "/Library/TeX/texbin/xelatex",
+    //         "args": [
+    //             "-synctex=1",
+    //             "-interaction=nonstopmode",
+    //             "-file-line-error",
+    //             "%DOC%"
+    //         ],
+    //         "env": {}
+    //     },
+    //     {
+    //         "name": "pdflatex",
+    //         "command": "/Library/TeX/texbin/pdflatex",
+    //         "args": [
+    //             "-synctex=1",
+    //             "-interaction=nonstopmode",
+    //             "-file-line-error",
+    //             "%DOC%"
+    //         ],
+    //         "env": {}
+    //     },
+    //     {
+    //         "name": "bibtex",
+    //         "command": "/Library/TeX/texbin/bibtex",
+    //         "args": [
+    //             "%DOCFILE%"
+    //         ],
+    //         "env": {}
+    //     }
+    // ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "pdfLaTeX",
+            "tools": [
+                "pdflatex"
+            ]
+        },
+        // {
+        //     "name": "latexmk 🔃",
+        //     "tools": [
+        //         "latexmk"
+        //     ]
+        // },
+        // {
+        //     "name": "xelatex",
+        //     "tools": [
+        //         "xelatex"
+        //     ]
+        // },
+        // {
+        //     "name": "pdflatex ➞ bibtex ➞ pdflatex×2",
+        //     "tools": [
+        //         "pdflatex",
+        //         "bibtex",
+        //         "pdflatex",
+        //         "pdflatex"
+        //     ]
+        // }
+    ],
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.view.pdf.internal.synctex.keybinding": "ctrl-click",
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.view.pdf.internal.port": 12345,
+    "latex-workshop.synctex.afterBuild.enabled": true,
+    "latex-workshop.view.pdf.internal.viewer.keepfocus": false,
+    "latex-workshop.view.pdf.internal.zoom": "page-width",
+}
