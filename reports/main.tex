@@ -8,6 +8,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{array} % Allows >{\centering\arraybackslash} in tabular
 
 %----------------------------------------------------------------------------------------
 %    TITLE PAGE
@@ -44,12 +45,27 @@
 %------------------------------------------------
 \section{Setup and Preliminaries}
 
+%TODO: J'aimerais beaucoup glisser les Continuous Normalizing Flows a.k.a Neural ODE avant DDPM et le reste puisque c'est vrm un paper essential a research field
+\begin{frame}{Neural ODE: Continuous Normalizing Flows}
+
+    \begin{block}{Continuous Normalizing Flows (CNF)}
+        CNFs model complex distributions by transforming a simple distribution (e.g., Gaussian) through a continuous-time ODE. The transformation is defined by a neural network that learns the dynamics of the flow.
+    \end{block}
+
+    PAS COMPLETE
+    
+    \vspace{0.3cm}
+    
+    \begin{alertblock}{Key Idea}
+        Instead of discrete steps, CNFs use a continuous-time approach to model the evolution of the distribution, allowing for more flexible and expressive transformations.
+    \end{alertblock}
+\end{frame}
+
 \begin{frame}{Evolution of Generative Models}
     \begin{center}
         \begin{minipage}{0.9\textwidth}
             \vspace{0.3cm}
             
-            % Compact timeline with years and descriptions
             \small
             \begin{tabular}{@{}l@{\hspace{0.8cm}}p{0.75\textwidth}@{}}
                 \textbf{2020} & \textbf{DDPM:} Denoising Diffusion Probabilistic Models interpret generation as reversing a discrete noise-adding process, learning to denoise at each step. They produced high-quality samples but required thousands of slow sampling steps. \\[0.4cm]
@@ -57,7 +73,6 @@
                 \textbf{2021} & \textbf{Score-based Models:} Score-based generative models extended diffusion to continuous-time SDEs, learning the score function ($\nabla_x \log p_t(x)$) to reverse a stochastic diffusion process. This unified diffusion with stochastic control, allowed probability flow ODEs, and sped up sampling. \\[0.4cm]
                 
                 \textbf{2023} & \textbf{Flow Matching:} Flow matching views generation as learning a deterministic ODE vector field that directly transports a simple distribution (e.g., Gaussian) to data. This removed stochasticity and significantly improved efficiency compared to diffusion/score methods. \\[0.4cm]
-                % \textbf{2023} & \textbf{SOCM:} Stochastic Optimal Control Matching reframes this transport problem as an optimal control task, where the learned control steers the process from a simple distribution to data. Its key contribution is a variance-reduced least-squares objective, yielding more stable and accurate training than prior approaches.
             \end{tabular}
             
             \vspace{0.3cm}
@@ -111,7 +126,7 @@
     \begin{block}{Classical Approaches}
         \begin{itemize}
             \item \textbf{Hamilton-Jacobi-Bellman (HJB) equation:} Partial differential equation approach
-            \item \textbf{Pontryagin's Maximum Principle:} Necessary conditions for optimality
+            % \item \textbf{Pontryagin's Maximum Principle:} Necessary conditions for optimality
             \item \textbf{Dynamic Programming:} Discrete-time recursive approach
         \end{itemize}
     \end{block}
@@ -123,6 +138,16 @@
     \end{alertblock}
 \end{frame}
 
+%TODO: A voir si je veux expliquer ce qu'est une Adjoint Method?!?!??!?!?!?
+
+%TODO: A voir encore si je ne veux pas faire un lien avec RL ou meme directement presente la HJB et demontrer que ls Jacobienne devient difficulement calculate (prix computationnel trop eleve) a plusieurs dimensions
+%! For continuous-time problems with low-dimensional state spaces, the standard approach to learn
+%! the optimal control is to solve the Hamilton-Jacobi-Bellman (HJB) partial differential equation
+%! (PDE) by gridding the space and using classical numerical methods. For high-dimensional problems,
+%! a large number of works parameterize the control using a neural network and train it applying a
+%! stochastic optimization algorithm on a loss function. These methods are known as Iterative Diffusion
+%! Optimization (IDO) techniques [59] (see Subsec. 2.2).
+
 %------------------------------------------------
 
 %------------------------------------------------
@@ -132,6 +157,85 @@
 %------------------------------------------------
 \section{Stochastic Optimal Control Matching}
 
+\begin{frame}{Reasons behind SOCM (1/2)}
+    Many fundamental tasks in machine learning can be naturally cast as stochastic optimal control problems, highlighting the importance of efficient SOC methods.
+    
+    \vspace{0.4cm}
+    
+    \begin{block}{Key ML Applications of SOC}
+        \begin{itemize}
+            \item \textbf{Reward fine-tuning of diffusion and flow models:} Optimizing generation quality using reward signals
+            
+            \vspace{0.2cm}
+            
+            \item \textbf{Conditional sampling on diffusion and flow models:} Steering generation towards specific conditions or constraints
+            
+            \vspace{0.2cm}
+            
+            \item \textbf{Sampling from unnormalized densities:} Efficiently drawing samples from complex, intractable distributions
+            
+            \vspace{0.2cm}
+            
+            \item \textbf{Importance sampling of rare events in SDEs:} Computing probabilities of low-probability but critical events
+        \end{itemize}
+    \end{block}
+    
+    \vspace{0.3cm}
+    
+    \begin{alertblock}{Key Insight}
+        The prevalence of SOC formulations in modern ML motivates the need for more efficient and stable solving methods.
+    \end{alertblock}
+\end{frame}
+
+\begin{frame}{Reasons behind SOCM (2/2)}
+    Current SOC methods suffer from optimization challenges that limit their effectiveness.
+    
+    \vspace{0.3cm}
+    
+    \begin{columns}[t]
+        \column{0.48\textwidth}
+        \begin{alertblock}{Current SOC Methods}
+            \begin{itemize}
+                \item Use \textbf{adjoint methods} (like CNFs)
+                \item Yield \textbf{non-convex} function landscapes
+                \item Difficult optimization with local minima
+                \item Unstable training dynamics
+            \end{itemize}
+        \end{alertblock}
+        
+        \column{0.48\textwidth}
+        \begin{block}{Diffusion Models Success}
+            \begin{itemize}
+                \item Use \textbf{least-squares loss}
+                \item Create \textbf{convex} functional landscapes
+                \item Stable and reliable optimization
+                \item Excellent empirical performance
+            \end{itemize}
+        \end{block}
+    \end{columns}
+    
+    \vspace{0.4cm}
+    
+    \begin{block}{SOCM's Innovation}
+        \textbf{Goal:} Develop least-squares loss formulations for SOC problems, combining the expressiveness of stochastic control with the optimization stability of diffusion models.
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{SOCM in Context: Optimization Landscapes}
+    \vspace{0.5cm}
+    \begin{table}
+        \centering
+        \begin{tabular}{>{\centering\arraybackslash}p{0.25\textwidth}>{\centering\arraybackslash}p{0.35\textwidth}>{\centering\arraybackslash}p{0.35\textwidth}}
+            \toprule
+            \textbf{Task} & \textbf{Non-convex} & \textbf{Least Squares} \\
+            \midrule
+            Generative Modeling & Maximum Likelihood CNFs & Diffusion models and Flow Matching \\
+            Stochastic Optimal Control & Adjoint Methods & \textcolor{red}{\textbf{Stochastic Optimal Control Matching}} \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
 
 \begin{frame}{Introducing Stochastic Optimal Control Matching}
     SOCM offers a more principled, stable, and accurate way to learn generative dynamics by blending stochastic control theory with modern matching-based generative modeling.
@@ -144,7 +248,7 @@
             
             \vspace{0.2cm}
             
-            \item \textbf{Least-Squares Matching:} Learning the control via least-squares matching—a stable, convex regression objective.
+            \item \textbf{Least-Squares Matching:} Learning the control via least-squares matching, a stable and convex regression objective.
             
             \vspace{0.2cm}
             
@@ -156,6 +260,7 @@
         \end{enumerate}
     \end{block}
 \end{frame}
+
 
 \begin{frame}{The SOCM Framework}
     \begin{block}{Key Components}
@@ -210,6 +315,8 @@
 
 %------------------------------------------------
 \section{Conclusion}
+
+%! so many links to do with RL and Monte Carlo Markov Chains which representent discretized differential equations
 %------------------------------------------------
 
 
@@ -312,11 +419,5 @@
 \end{frame}
 
 %------------------------------------------------
-
-\begin{frame}
-    \Huge{\centerline{\textbf{The End}}}
-\end{frame}
-
-%----------------------------------------------------------------------------------------
 
 \end{document}
