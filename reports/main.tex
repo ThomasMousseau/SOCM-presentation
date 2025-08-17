@@ -13,16 +13,16 @@
 %    TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title{SimplePlus Beamerm dddd }
-\subtitle{Subtitle}
+\title{Stochastic Optimal Control Matching}
+\subtitle{Carles Domingo-Enrich, Jiequn Han, Brandon Amos, Joan Bruna, Ricky T. Q. Chen}
 
-\author{Pin-Yen Huang}
+\author{Thomas Mousseau}
 
-\institute
-{
-    Department of Computer Science and Information Engineering \\
-    National Taiwan University % Your institution for the title page
-}
+% \institute
+% {
+%     Department of Computer Science and Information Engineering \\
+%     National Taiwan University % Your institution for the title page
+% }
 \date{\today} % Date, can be changed to a custom date
 
 %----------------------------------------------------------------------------------------
@@ -42,18 +42,186 @@
 \end{frame}
 
 %------------------------------------------------
-\section{First Section}
+\section{Setup and Preliminaries}
+
+\begin{frame}{Evolution of Generative Models}
+    \begin{center}
+        \begin{minipage}{0.9\textwidth}
+            \vspace{0.3cm}
+            
+            % Compact timeline with years and descriptions
+            \small
+            \begin{tabular}{@{}l@{\hspace{0.8cm}}p{0.75\textwidth}@{}}
+                \textbf{2020} & \textbf{DDPM:} Denoising Diffusion Probabilistic Models interpret generation as reversing a discrete noise-adding process, learning to denoise at each step. They produced high-quality samples but required thousands of slow sampling steps. \\[0.4cm]
+                
+                \textbf{2021} & \textbf{Score-based Models:} Score-based generative models extended diffusion to continuous-time SDEs, learning the score function ($\nabla_x \log p_t(x)$) to reverse a stochastic diffusion process. This unified diffusion with stochastic control, allowed probability flow ODEs, and sped up sampling. \\[0.4cm]
+                
+                \textbf{2023} & \textbf{Flow Matching:} Flow matching views generation as learning a deterministic ODE vector field that directly transports a simple distribution (e.g., Gaussian) to data. This removed stochasticity and significantly improved efficiency compared to diffusion/score methods. \\[0.4cm]
+                % \textbf{2023} & \textbf{SOCM:} Stochastic Optimal Control Matching reframes this transport problem as an optimal control task, where the learned control steers the process from a simple distribution to data. Its key contribution is a variance-reduced least-squares objective, yielding more stable and accurate training than prior approaches.
+            \end{tabular}
+            
+            \vspace{0.3cm}
+        \end{minipage}
+    \end{center}
+\end{frame}
+
+
+
+\begin{frame}{What is a Stochastic Control Problem?}
+    A stochastic control problem involves finding an optimal control policy to steer a dynamical system under uncertainty.
+    
+    \vspace{0.3cm}
+    
+    \begin{block}{Key Components}
+        \begin{itemize}
+            \item \textbf{State Process:} $X_t \in \mathbb{R}^d$ (position in state space at time $t$)
+            \item \textbf{Control Process:} $u_t \in \mathbb{R}^d$ (action/decision at time $t$)
+            \item \textbf{Noise Process:} $W_t$ (random disturbances, typically Brownian motion)
+        \end{itemize}
+    \end{block}
+    
+    \begin{columns}[t]
+        \column{0.45\textwidth}
+        \begin{alertblock}{Dynamics (SDE)}
+            \vspace{-0.1cm}
+            \begin{equation}
+            dX_t = f(X_t, u_t, t) dt + g(X_t, t) dW_t
+            \end{equation}
+            \vspace{-0.2cm}
+        \end{alertblock}
+        
+        \column{0.52\textwidth}
+        \begin{alertblock}{Cost Function}
+            \vspace{-0.1cm}
+            \begin{equation}
+            J(u) = \mathbb{E}\left[\int_0^T L(X_t, u_t, t) dt + \Phi(X_T)\right]
+            \end{equation}
+            \vspace{-0.2cm}
+        \end{alertblock}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{The Goal: Finding Optimal Control}
+    \begin{block}{Optimal Control $u^*$}
+        Find the control policy $u^*$ that minimizes the expected cost: $u^* = \arg\min_u J(u)$
+    \end{block}
+    
+    \vspace{0.3cm}
+    
+    \begin{block}{Classical Approaches}
+        \begin{itemize}
+            \item \textbf{Hamilton-Jacobi-Bellman (HJB) equation:} Partial differential equation approach
+            \item \textbf{Pontryagin's Maximum Principle:} Necessary conditions for optimality
+            \item \textbf{Dynamic Programming:} Discrete-time recursive approach
+        \end{itemize}
+    \end{block}
+    
+    \vspace{0.3cm}
+    
+    \begin{alertblock}{Challenge}
+        These classical methods become computationally intractable in high dimensions due to the \textit{curse of dimensionality}.
+    \end{alertblock}
+\end{frame}
+
 %------------------------------------------------
 
-\begin{frame}{Bullet Points}
-    \begin{itemize}
-        \item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-        \item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus eu
-        \item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
-        \item Nam cursus est eget velit posuere pellentesque
-        \item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida
-    \end{itemize}
+%------------------------------------------------
+% \section{Setup and preliminaries}
+%------------------------------------------------
+
+%------------------------------------------------
+\section{Stochastic Optimal Control Matching}
+
+
+\begin{frame}{Introducing Stochastic Optimal Control Matching}
+    SOCM offers a more principled, stable, and accurate way to learn generative dynamics by blending stochastic control theory with modern matching-based generative modeling.
+    
+    \vspace{0.4cm}
+    
+    \begin{block}{Key Novel Contributions}
+        \begin{enumerate}
+            \item \textbf{Controlled Stochastic Process:} Views the generation process as a controlled stochastic process bridging a simple distribution to data.
+            
+            \vspace{0.2cm}
+            
+            \item \textbf{Least-Squares Matching:} Learning the control via least-squares matching—a stable, convex regression objective.
+            
+            \vspace{0.2cm}
+            
+            \item \textbf{Joint Optimization:} Optimizing control and variance-reducing reparameterization matrices simultaneously, for efficient learning.
+            
+            \vspace{0.2cm}
+            
+            \item \textbf{Path-wise Reparameterization:} Introducing a path-wise reparameterization trick, boosting gradient estimation quality.
+        \end{enumerate}
+    \end{block}
 \end{frame}
+
+\begin{frame}{The SOCM Framework}
+    \begin{block}{Key Components}
+        \begin{itemize}
+            \item \textbf{Controlled Stochastic Process:} $dX_t = f(X_t, u_t, t) dt + g(X_t, t) dW_t$
+            \item \textbf{Cost Function:} $J(u) = \mathbb{E}\left[\int_0^T L(X_t, u_t, t) dt + \Phi(X_T)\right]$
+            \item \textbf{Control Policy:} $u^* = \arg\min_u J(u)$
+        \end{itemize}
+    \end{block}
+    
+    \vspace{0.3cm}
+    
+    \begin{block}{Learning Objective}
+        Minimize the expected cost using a least-squares regression objective:
+        \begin{equation}
+        L(u) = \mathbb{E}\left[\|X_T - X_{data}\|^2\right]
+        \end{equation}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Advantages of Controlled Stochastic Processes}
+    Why model generation as a controlled stochastic process rather than a fixed deterministic flow?
+    
+    \vspace{0.4cm}
+    
+    \begin{block}{Key Advantages}
+        \begin{enumerate}
+            \item \textbf{Powerful Theoretical Tools:} Access to established methods from stochastic optimal control theory like Hamilton-Jacobi-Bellman equations and dynamic programming.
+            
+            \vspace{0.2cm}
+            
+            \item \textbf{Learnable Trajectories:} The trajectory of the distribution is no longer fixed (unlike hand-designed noise schedulers in DDPM) and can be learned and optimized to improve efficiency and quality.
+            
+            \vspace{0.2cm}
+            
+            \item \textbf{Enhanced Interpretability:} The objective becomes finding an optimal control policy, which provides clear insight into how the model moves from its initial distribution to the final complex data distribution.
+        \end{enumerate}
+    \end{block}
+    
+    \vspace{0.3cm}
+    
+    \begin{alertblock}{Result}
+        These advantages enable SOCM to achieve better sample quality and training stability compared to traditional approaches.
+    \end{alertblock}
+\end{frame}
+
+%------------------------------------------------
+
+%------------------------------------------------
+\section{Experiments and results}
+%------------------------------------------------
+
+%------------------------------------------------
+\section{Conclusion}
+%------------------------------------------------
+
+
+% \begin{frame}{Bullet Points}
+%     \begin{itemize}
+%         \item Lorem ipsum dolor sit amet, consectetur adipiscing elit
+%         \item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus eu
+%         \item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
+%         \item Nam cursus est eget velit posuere pellentesque
+%         \item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida
+%     \end{itemize}
+% \end{frame}
 
 %------------------------------------------------
 
@@ -92,8 +260,6 @@
     \end{columns}
 \end{frame}
 
-%------------------------------------------------
-\section{Second Section}
 %------------------------------------------------
 
 \begin{frame}{Table}
