@@ -52,14 +52,15 @@
     \begin{block}{Continuous Normalizing Flows (CNF)}
         CNFs model complex distributions by transforming a simple distribution (e.g., Gaussian) through a continuous-time ODE. The transformation is defined by a neural network that learns the dynamics of the flow.
     \end{block}
-
-    PAS COMPLETE
     
     \vspace{0.3cm}
     
     \begin{alertblock}{Key Idea}
         Instead of discrete steps, CNFs use a continuous-time approach to model the evolution of the distribution, allowing for more flexible and expressive transformations.
     \end{alertblock}
+
+    \note{Cette slide n'est pas complete, je voudrais ici presenter le debut de ce milieu soit le Neural ODEs, le but qu'ils comblent dans le milieu et leur premiere implementation soit CNFs.
+            De plus, je veux aussi expliquer les Adjoint Methods ici puisque elles sont recurrente dans tous le reste du SOCM papier}
 \end{frame}
 
 \begin{frame}{Evolution of Generative Models}
@@ -113,6 +114,9 @@
             \vspace{-0.2cm}
         \end{alertblock}
     \end{columns}
+
+    \note{Je dois revoir la facon que je presente les SOC, je dois specifiquement presenter tous les
+    elements des SDE ici comme le drift coefficient, le diffusion coefficient, et la fonction de coût.}
 \end{frame}
 
 \begin{frame}{The Goal: Finding Optimal Control}
@@ -125,7 +129,7 @@
     \begin{block}{Classical Approaches}
         \begin{itemize}
             \item \textbf{Hamilton-Jacobi-Bellman (HJB) equation:} Partial differential equation approach
-            % \item \textbf{Pontryagin's Maximum Principle:} Necessary conditions for optimality
+            \item \textbf{Pontryagin's Maximum Principle:} Necessary conditions for optimality
             \item \textbf{Dynamic Programming:} Discrete-time recursive approach
         \end{itemize}
     \end{block}
@@ -276,6 +280,9 @@
             \item $\alpha(v, X^v, B)$ is a weighting function
         \end{itemize}
     \end{block}
+    \note{Ici, je dois presenter en details la matrice Mt, B ainsi que w. De plus, je veux expliquer l'intuition du path-wise reparameterization trick, a novel
+            technique to obtain low-variance estimates of the gradient of the conditional expectation of a functional of
+            a random process with respect to its initial value}
 \end{frame}
 
 \begin{frame}{SOCM Algorithm}
