@@ -80,8 +80,6 @@
     \end{center}
 \end{frame}
 
-
-
 \begin{frame}{What is a Stochastic Control Problem?}
     A stochastic control problem involves finding an optimal control policy to steer a dynamical system under uncertainty.
     
@@ -263,50 +261,49 @@
 
 
 \begin{frame}{The SOCM Framework}
-    \begin{block}{Key Components}
-        \begin{itemize}
-            \item \textbf{Controlled Stochastic Process:} $dX_t = f(X_t, u_t, t) dt + g(X_t, t) dW_t$
-            \item \textbf{Cost Function:} $J(u) = \mathbb{E}\left[\int_0^T L(X_t, u_t, t) dt + \Phi(X_T)\right]$
-            \item \textbf{Control Policy:} $u^* = \arg\min_u J(u)$
-        \end{itemize}
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Learning Objective}
-        Minimize the expected cost using a least-squares regression objective:
+    \small
+    \begin{block}{SOCM Loss Function}
+        The Stochastic Optimal Control Matching objective is defined as:
         \begin{equation}
-        L(u) = \mathbb{E}\left[\|X_T - X_{data}\|^2\right]
+        \mathcal{L}_{SOCM}(u, M) := \mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X^v_t, t) - w(t, v, X^v, B, M_t)\|^2 dt \times \alpha(v, X^v, B)\right]
         \end{equation}
     \end{block}
-\end{frame}
 
-\begin{frame}{Advantages of Controlled Stochastic Processes}
-    Why model generation as a controlled stochastic process rather than a fixed deterministic flow?
-    
-    \vspace{0.4cm}
-    
-    \begin{block}{Key Advantages}
-        \begin{enumerate}
-            \item \textbf{Powerful Theoretical Tools:} Access to established methods from stochastic optimal control theory like Hamilton-Jacobi-Bellman equations and dynamic programming.
-            
-            \vspace{0.2cm}
-            
-            \item \textbf{Learnable Trajectories:} The trajectory of the distribution is no longer fixed (unlike hand-designed noise schedulers in DDPM) and can be learned and optimized to improve efficiency and quality.
-            
-            \vspace{0.2cm}
-            
-            \item \textbf{Enhanced Interpretability:} The objective becomes finding an optimal control policy, which provides clear insight into how the model moves from its initial distribution to the final complex data distribution.
-        \end{enumerate}
+    \begin{block}{Where:}
+        \begin{itemize}
+            \item $X^v$ is the process controlled by $v$: 
+            \begin{equation}
+            dX^v_t = (b(X^v_t, t) + \sigma(t)v(X^v_t, t)) dt + \sqrt{\lambda}\sigma(t) dB_t
+            \end{equation}
+            with $X^v_0 \sim p_0$
+            \item $u(X^v_t, t)$ is the control policy being learned
+            \item $w(t, v, X^v, B, M_t)$ is the target matching function
+            \item $\alpha(v, X^v, B)$ is a weighting function
+        \end{itemize}
     \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{alertblock}{Result}
-        These advantages enable SOCM to achieve better sample quality and training stability compared to traditional approaches.
-    \end{alertblock}
 \end{frame}
 
+\begin{frame}{SOCM Algorithm}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.95\textwidth]{figures/SOCM_algo.png}
+        \caption{Stochastic Optimal Control Matching (SOCM) Algorithm}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Experimental Results (1/2)}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.95\textwidth]{figures/plots_1.png}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Experimental Results (2/2)}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.95\textwidth]{figures/plots_2.png}
+    \end{figure}
+\end{frame}
 %------------------------------------------------
 
 %------------------------------------------------
