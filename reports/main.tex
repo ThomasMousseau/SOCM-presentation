@@ -83,40 +83,43 @@
 \end{frame}
 
 \begin{frame}{What is a Stochastic Control Problem?}
-    A stochastic control problem involves finding an optimal control policy to steer a dynamical system under uncertainty.
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Key Components}
-        \begin{itemize}
-            \item \textbf{State Process:} $X_t \in \mathbb{R}^d$ (position in state space at time $t$)
-            \item \textbf{Control Process:} $u_t \in \mathbb{R}^d$ (action/decision at time $t$)
-            \item \textbf{Noise Process:} $W_t$ (random disturbances, typically Brownian motion)
-        \end{itemize}
-    \end{block}
-    
+    \vspace{-0.7cm}
     \begin{columns}[t]
-        \column{0.45\textwidth}
+        \column{0.48\textwidth}
         \begin{alertblock}{Dynamics (SDE)}
-            \vspace{-0.1cm}
             \begin{equation}
-            dX_t = f(X_t, u_t, t) dt + g(X_t, t) dW_t
+            dx_t = \underbrace{u_t dt}_{\text{drift coefficient}} + \underbrace{dw_t}_{\text{diffusion coefficient}}
             \end{equation}
-            \vspace{-0.2cm}
         \end{alertblock}
         
-        \column{0.52\textwidth}
+    \vspace{0.1cm}
+        
+        \column{0.49\textwidth}
         \begin{alertblock}{Cost Function}
             \vspace{-0.1cm}
             \begin{equation}
-            J(u) = \mathbb{E}\left[\int_0^T L(X_t, u_t, t) dt + \Phi(X_T)\right]
+            J(u) = \mathbb{E}\left[\int_0^T L(x_t, u_t, t) dt + \Phi(x_T)\right]
             \end{equation}
             \vspace{-0.2cm}
         \end{alertblock}
     \end{columns}
+    
+    \begin{block}{Key Components}
+        \small
+        \begin{itemize}
+            \item \textbf{State Process:} $x_t \in \mathbb{R}^d$ (position in state space at time $t$)
+            \item \textbf{Control Process:} $u_t \in \mathbb{R}^d$ (action/decision at time $t$)
+            \item \textbf{Noise Process:} $w_t$ (random disturbances, typically Brownian motion)
+            \item \textbf{Running Cost:} $L(x_t, u_t, t)$ (cost accumulated over time)
+            \item \textbf{Terminal Cost:} $\Phi(x_T)$ (cost at the final time $T$)
+        \end{itemize}
+    \end{block}
 
-    \note{Je dois revoir la facon que je presente les SOC, je dois specifiquement presenter tous les
-    elements des SDE ici comme le drift coefficient, le diffusion coefficient, et la fonction de coût.}
+    \note{
+    \textcolor{red}{A stochastic control problem involves finding an optimal control policy to steer a dynamical system under uncertainty while minimizing the expected cost.}
+    \\
+    \textcolor{orange}{A voir si je rajouter une autre slide qui presente la solution avec HJB + Feynman-Kac approache.}
+    }
 \end{frame}
 
 \begin{frame}{The Goal: Finding Optimal Control}
@@ -141,6 +144,8 @@
     \end{alertblock}
 \end{frame}
 
+
+
 %TODO: A voir si je veux expliquer ce qu'est une Adjoint Method?!?!??!?!?!?
 
 %TODO: A voir encore si je ne veux pas faire un lien avec RL ou meme directement presente la HJB et demontrer que ls Jacobienne devient difficulement calculate (prix computationnel trop eleve) a plusieurs dimensions
@@ -150,6 +155,67 @@
 %! a large number of works parameterize the control using a neural network and train it applying a
 %! stochastic optimization algorithm on a loss function. These methods are known as Iterative Diffusion
 %! Optimization (IDO) techniques [59] (see Subsec. 2.2).
+
+
+\begin{frame}{Classical vs Neural Solutions}
+    \vspace{-0.5cm}
+    \begin{columns}[t]
+        \column{0.60\textwidth}
+        \begin{alertblock}{Classical: HJB PDE}
+            \vspace{-0.1cm}
+            \small
+            \textbf{Hamilton-Jacobi-Bellman Equation:}
+            \begin{equation}
+            \frac{\partial V}{\partial t} + \min_u \left[ L(x,u,t) + \frac{\partial V}{\partial x} f(x,u,t) + \frac{1}{2}\text{tr}(\sigma^T \nabla^2 V \sigma) \right] = 0
+            \end{equation}
+            
+            \vspace{0.2cm}
+            \textbf{Solution Process:}
+            \begin{itemize}
+                \item Discretize state space on grid
+                \item Use finite difference methods
+                \item Solve backward in time from $V(x,T) = \Phi(x)$
+            \end{itemize}
+        \end{alertblock}
+        
+        \column{0.42\textwidth}
+        \begin{block}{Modern: Neural PDE Solvers}
+            \vspace{-0.1cm}
+            \small
+            \textbf{Neural Network Approximation:}
+            \begin{equation}
+            V(x,t) \approx V_\theta(x,t)
+            \end{equation}
+            
+            \vspace{0.2cm}
+            \textbf{Solution Process:}
+            \begin{itemize}
+                \item Parameterize value function with NN
+                \item \textcolor{blue}{Physics-informed loss}: HJB residual
+                \item \textcolor{blue}{Automatic differentiation} for gradients
+                \item Train end-to-end with SGD
+            \end{itemize}
+        \end{block}
+    \end{columns}
+    
+    \vspace{0.3cm}
+    
+    \begin{block}{Key Differences}
+        \begin{itemize}
+            \item \textbf{Scalability:} Classical methods suffer from \textcolor{red}{curse of dimensionality} (grid size $\propto d^n$), while neural methods scale \textcolor{ForestGreen}{naturally to high dimensions}
+            
+            \item \textbf{Accuracy:} Classical methods provide \textcolor{blue}{theoretical convergence guarantees}, neural methods offer \textcolor{orange}{empirical flexibility} but may lack guarantees
+            
+            \item \textbf{Computation:} Classical requires \textcolor{red}{expensive grid computation}, neural requires \textcolor{ForestGreen}{gradient-based optimization}
+        \end{itemize}
+    \end{block}
+
+    \note{
+    \textcolor{blue}{\textbf{HJB Equation:}} The Hamilton-Jacobi-Bellman equation provides the theoretical foundation for solving stochastic optimal control problems by characterizing the value function $V(x,t)$ as the solution to a nonlinear PDE. \\
+    \vspace{0.1cm}
+    \textcolor{ForestGreen}{\textbf{Neural PDE Solvers:}} Modern approaches use neural networks to approximate the value function directly, avoiding discretization and enabling high-dimensional problems. The network is trained to satisfy the HJB equation through physics-informed loss functions.
+    }
+\end{frame}
 
 %------------------------------------------------
 \section{Stochastic Optimal Control Matching}
@@ -272,9 +338,8 @@
         \begin{itemize}
             \item $X^v$ is the process controlled by $v$: 
             \begin{equation}
-            dX^v_t = (b(X^v_t, t) + \sigma(t)v(X^v_t, t)) dt + \sqrt{\lambda}\sigma(t) dB_t
-            \end{equation}
-            with $X^v_0 \sim p_0$
+            dX^v_t = (b(X^v_t, t) + \sigma(t)v(X^v_t, t)) dt + \sqrt{\lambda}\sigma(t) dB_t \text{, with } X^v_0 \sim p_0
+            \end{equation} 
             \item $u(X^v_t, t)$ is the control policy being learned
             \item $w(t, v, X^v, B, M_t)$ is the target matching function
             \item $\alpha(v, X^v, B)$ is a weighting function
@@ -313,7 +378,10 @@
     \note{At the end of training, SOCM obtains the lowest L2
         error, improving over all existing methods by a factor of
         around ten. The two SOCM ablations come in second and third by a substantial difference, which underlines
-        the importance of the path-wise reparameterization trick.}
+        the importance of the path-wise reparameterization trick.
+        \\
+        \textcolor{red}{JE DOIS COMPRENDRE CE QUE EST UN ORNSTEIN UHLENBECK PROCESS}
+        }
 \end{frame}
 
 %------------------------------------------------
