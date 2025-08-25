@@ -46,23 +46,6 @@
 %------------------------------------------------
 \section{Setup and Preliminaries}
 
-%TODO: J'aimerais beaucoup glisser les Continuous Normalizing Flows a.k.a Neural ODE avant DDPM et le reste puisque c'est vrm un paper essential a research field
-\begin{frame}{Neural ODE: Continuous Normalizing Flows}
-
-    \begin{block}{Continuous Normalizing Flows (CNF)}
-        CNFs model complex distributions by transforming a simple distribution (e.g., Gaussian) through a continuous-time ODE. The transformation is defined by a neural network that learns the dynamics of the flow.
-    \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{alertblock}{Key Idea}
-        Instead of discrete steps, CNFs use a continuous-time approach to model the evolution of the distribution, allowing for more flexible and expressive transformations.
-    \end{alertblock}
-
-    \note{Cette slide n'est pas complete, je voudrais ici presenter le debut de ce milieu soit le Neural ODEs, le but qu'ils comblent dans le milieu et leur premiere implementation soit CNFs.
-            De plus, je veux aussi expliquer les Adjoint Methods ici puisque elles sont recurrente dans tous le reste du SOCM papier}
-\end{frame}
-
 \begin{frame}{Evolution of Generative Models}
     \begin{center}
         \begin{minipage}{0.9\textwidth}
@@ -82,11 +65,69 @@
     \end{center}
 \end{frame}
 
+\begin{frame}{SOC as the Foundation of Generative Models}
+    \vspace{-0.3cm}
+    \begin{block}{The Core Challenge: Unnormalized Densities}
+        Generative models must sample from complex distributions $p(x)$ where the normalization constant $Z = \int p(x) dx$ is intractable to compute.
+    \end{block}
+        
+    \begin{columns}[t]
+        \column{0.48\textwidth}
+        \begin{alertblock}{SOC Connection}
+            \small
+            \textbf{Key Insight:} \\
+            Transform tractable distributions (Gaussian) to complex target distributions through \textcolor{blue}{optimal control policies}.
+            
+            \vspace{0.3cm}
+            
+            This bridges the gap between:
+            \begin{itemize}
+                \item Simple sampling (easy)
+                \item Complex data distributions (hard)
+            \end{itemize}
+        \end{alertblock}
+        
+        \column{0.48\textwidth}
+        \begin{block}{Modern Implementations}
+            \small
+            
+            \textbf{Diffusion Models:} \\
+            $u_t = -\frac{1}{2}\nabla_x \log p_t(x)$ (denoising)
+            
+            \vspace{0.2cm}
+            \textbf{Score-based Models:} \\
+            $u_t = \nabla_x \log p_t(x)$ (score function)
+            
+            \vspace{0.2cm}
+            \textbf{Flow Matching:} \\
+            $u_t = \frac{x_1 - x_0}{T-t}$ (deterministic flow)
+            
+            
+            \vspace{0.2cm}
+            All learn \textcolor{blue}{optimal control policies} to transport distributions!
+        \end{block}
+    \end{columns}
+    
+    \vspace{0.3cm}
+    
+    \begin{block}{Key Insight}
+        \textbf{Generative modeling = Stochastic optimal control} \\
+        Every successful generative model implicitly solves an SOC problem to bridge a tractable prior distribution to the intractable target distribution. \textcolor{ForestGreen}{SOCM makes this connection explicit and optimizable.}
+    \end{block}
+
+    \note{
+    \textcolor{blue}{\textbf{Unnormalized Densities:}} The fundamental challenge in generative modeling is sampling from distributions $p(x) = \frac{1}{Z}e^{-E(x)}$ where $Z$ is unknown. SOC provides the mathematical framework to construct sampling procedures. \\
+    \vspace{0.1cm}
+    \textcolor{orange}{\textbf{Historical Context:}} From Langevin dynamics to modern diffusion models, all major breakthroughs in generative modeling can be understood through the lens of stochastic optimal control theory.
+    }
+\end{frame}
+
 \begin{frame}{What is a Stochastic Control Problem?}
     \vspace{-0.7cm}
     \begin{columns}[t]
         \column{0.48\textwidth}
         \begin{alertblock}{Dynamics (SDE)}
+            \vspace{-0.3cm}
             \begin{equation}
             dx_t = \underbrace{u_t dt}_{\text{drift coefficient}} + \underbrace{dw_t}_{\text{diffusion coefficient}}
             \end{equation}
@@ -96,7 +137,7 @@
         
         \column{0.49\textwidth}
         \begin{alertblock}{Cost Function}
-            \vspace{-0.1cm}
+            \vspace{-0.3cm}
             \begin{equation}
             J(u) = \mathbb{E}\left[\int_0^T L(x_t, u_t, t) dt + \Phi(x_T)\right]
             \end{equation}
@@ -122,26 +163,29 @@
     }
 \end{frame}
 
-\begin{frame}{The Goal: Finding Optimal Control}
+\begin{frame}{Classic Approach to Finding Optimal Control}
     \begin{block}{Optimal Control $u^*$}
         Find the control policy $u^*$ that minimizes the expected cost: $u^* = \arg\min_u J(u)$
     \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Classical Approaches}
-        \begin{itemize}
-            \item \textbf{Hamilton-Jacobi-Bellman (HJB) equation:} Partial differential equation approach
-            \item \textbf{Pontryagin's Maximum Principle:} Necessary conditions for optimality
-            \item \textbf{Dynamic Programming:} Discrete-time recursive approach
-        \end{itemize}
+        
+    \begin{block}{Hamilton-Jacobi-Bellman (HJB) Equation}
+        The classical approach uses the HJB PDE to characterize the value function $V(x,t)$:
+        \small
+        \begin{equation}
+        \frac{\partial V}{\partial t} + \min_u \left[ L(x,u,t) + \frac{\partial V}{\partial x} f(x,u,t) + \frac{1}{2}\text{tr}(\sigma^T \nabla^2 V \sigma) \right] = 0
+        \end{equation}
+        
+        \vspace{0.2cm}
+        With boundary condition: $V(x,T) = \Phi(x)$ (terminal cost)
     \end{block}
-    
-    \vspace{0.3cm}
-    
-    \begin{alertblock}{Challenge}
-        These classical methods become computationally intractable in high dimensions due to the \textit{curse of dimensionality}.
+        
+    \begin{alertblock}{The Curse of Dimensionality}
+        Classical numerical methods (finite differences, grid-based) become \textcolor{red}{computationally intractable} in high dimensions due to exponential growth in grid size: $\mathcal{O}(N^d)$ where $d$ is dimension.
     \end{alertblock}
+
+    \note{
+    \textcolor{blue}{\textbf{HJB Equation:}} The Hamilton-Jacobi-Bellman equation provides the theoretical foundation for solving stochastic optimal control problems by characterizing the value function $V(x,t)$ as the solution to a nonlinear PDE. The optimal control is then $u^*(x,t) = \arg\min_u [\cdots]$ from the HJB equation.
+    }
 \end{frame}
 
 
@@ -156,64 +200,61 @@
 %! stochastic optimization algorithm on a loss function. These methods are known as Iterative Diffusion
 %! Optimization (IDO) techniques [59] (see Subsec. 2.2).
 
-
-\begin{frame}{Classical vs Neural Solutions}
-    \vspace{-0.5cm}
-    \begin{columns}[t]
-        \column{0.60\textwidth}
-        \begin{alertblock}{Classical: HJB PDE}
-            \vspace{-0.1cm}
-            \small
-            \textbf{Hamilton-Jacobi-Bellman Equation:}
-            \begin{equation}
-            \frac{\partial V}{\partial t} + \min_u \left[ L(x,u,t) + \frac{\partial V}{\partial x} f(x,u,t) + \frac{1}{2}\text{tr}(\sigma^T \nabla^2 V \sigma) \right] = 0
-            \end{equation}
-            
-            \vspace{0.2cm}
-            \textbf{Solution Process:}
-            \begin{itemize}
-                \item Discretize state space on grid
-                \item Use finite difference methods
-                \item Solve backward in time from $V(x,T) = \Phi(x)$
-            \end{itemize}
-        \end{alertblock}
+\begin{frame}{Neural PDE Solvers for SOC}
+    
+    \begin{block}{Core Innovation: Neural ODEs (Chen et al., 2018)}
+        \textcolor{blue}{\textbf{Key Insight:}} Replace discrete layers with continuous-time ODEs \\
+        $\frac{dh(t)}{dt} = f_\theta(h(t), t)$ where $h(t)$ represents hidden states evolving continuously
+    \end{block}
         
-        \column{0.42\textwidth}
-        \begin{block}{Modern: Neural PDE Solvers}
-            \vspace{-0.1cm}
+    \begin{columns}[t]
+        \column{0.48\textwidth}
+        \begin{alertblock}{Neural Network Approximation}
             \small
-            \textbf{Neural Network Approximation:}
+            \textbf{Value Function:}
             \begin{equation}
             V(x,t) \approx V_\theta(x,t)
             \end{equation}
             
-            \vspace{0.2cm}
-            \textbf{Solution Process:}
+            \textbf{Control Policy:}
+            \begin{equation}
+            u(x,t) \approx u_\phi(x,t)
+            \end{equation}
+            
+            Both parameterized by deep neural networks
+        \end{alertblock}
+        
+        \column{0.48\textwidth}
+        \begin{block}{Training Process}
+            \small
+            \textbf{Physics-Informed Loss:}
+            \begin{equation}
+            \mathcal{L} = \|HJB_{residual}\|^2 + \|BC_{error}\|^2
+            \end{equation}
+            
+            \textbf{Key Components:}
             \begin{itemize}
-                \item Parameterize value function with NN
-                \item \textcolor{blue}{Physics-informed loss}: HJB residual
-                \item \textcolor{blue}{Automatic differentiation} for gradients
-                \item Train end-to-end with SGD
+                \item \textcolor{blue}{Automatic differentiation} for PDE terms
+                \item \textcolor{ForestGreen}{Adjoint method} for gradients
+                \item \textcolor{orange}{Stochastic sampling} of $(x,t)$ points
             \end{itemize}
         \end{block}
     \end{columns}
     
     \vspace{0.3cm}
     
-    \begin{block}{Key Differences}
+    \begin{block}{Advantages Over Classical Methods}
         \begin{itemize}
-            \item \textbf{Scalability:} Classical methods suffer from \textcolor{red}{curse of dimensionality} (grid size $\propto d^n$), while neural methods scale \textcolor{ForestGreen}{naturally to high dimensions}
-            
-            \item \textbf{Accuracy:} Classical methods provide \textcolor{blue}{theoretical convergence guarantees}, neural methods offer \textcolor{orange}{empirical flexibility} but may lack guarantees
-            
-            \item \textbf{Computation:} Classical requires \textcolor{red}{expensive grid computation}, neural requires \textcolor{ForestGreen}{gradient-based optimization}
+            \item \textcolor{ForestGreen}{\textbf{High-dimensional scalability:}} No curse of dimensionality
+            \item \textcolor{ForestGreen}{\textbf{Mesh-free:}} No spatial discretization required  
+            \item \textcolor{orange}{\textbf{Limitation:}} Requires careful tuning and may lack convergence guarantees
         \end{itemize}
     \end{block}
 
     \note{
-    \textcolor{blue}{\textbf{HJB Equation:}} The Hamilton-Jacobi-Bellman equation provides the theoretical foundation for solving stochastic optimal control problems by characterizing the value function $V(x,t)$ as the solution to a nonlinear PDE. \\
+    \textcolor{blue}{\textbf{Neural ODEs:}} Chen et al. (2018) showed that residual networks can be interpreted as discretizations of ODEs. This insight led to continuous-depth models and, crucially for our context, neural methods for solving differential equations. \\
     \vspace{0.1cm}
-    \textcolor{ForestGreen}{\textbf{Neural PDE Solvers:}} Modern approaches use neural networks to approximate the value function directly, avoiding discretization and enabling high-dimensional problems. The network is trained to satisfy the HJB equation through physics-informed loss functions.
+    \textcolor{ForestGreen}{\textbf{Physics-Informed Neural Networks:}} The key is training networks to satisfy the HJB equation through the residual loss, making the physics constraints part of the optimization objective.
     }
 \end{frame}
 
