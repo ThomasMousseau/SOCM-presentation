@@ -68,9 +68,11 @@
 \begin{frame}{SOC as the Foundation of Generative Models}
     \vspace{-0.3cm}
     \begin{block}{The Core Challenge: Unnormalized Densities}
-        Generative models must sample from complex distributions $p(x)$ where the normalization constant $Z = \int p(x) dx$ is intractable to compute.
+        Generative models must sample from complex distributions $p_{\text{data}}(x) = \frac{1}{Z} \tilde{p}_{\text{data}}(x)$ where the normalization constant $Z = \int \tilde{p}_{\text{data}}(x) dx$ is intractable to compute. This intractability arises from the curse of dimensionality when integrating over high-dimensional spaces.
     \end{block}
-        
+
+    \vspace{-0.3cm}
+
     \begin{columns}[t]
         \column{0.48\textwidth}
         \begin{alertblock}{SOC Connection}
@@ -102,18 +104,9 @@
             \textbf{Flow Matching:} \\
             $u_t = \frac{x_1 - x_0}{T-t}$ (deterministic flow)
             
-            
-            \vspace{0.2cm}
             All learn \textcolor{blue}{optimal control policies} to transport distributions!
         \end{block}
     \end{columns}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Key Insight}
-        \textbf{Generative modeling = Stochastic optimal control} \\
-        Every successful generative model implicitly solves an SOC problem to bridge a tractable prior distribution to the intractable target distribution. \textcolor{ForestGreen}{SOCM makes this connection explicit and optimizable.}
-    \end{block}
 
     \note{
     \textcolor{blue}{\textbf{Unnormalized Densities:}} The fundamental challenge in generative modeling is sampling from distributions $p(x) = \frac{1}{Z}e^{-E(x)}$ where $Z$ is unknown. SOC provides the mathematical framework to construct sampling procedures. \\
@@ -123,44 +116,85 @@
 \end{frame}
 
 \begin{frame}{What is a Stochastic Control Problem?}
-    \vspace{-0.7cm}
-    \begin{columns}[t]
-        \column{0.48\textwidth}
-        \begin{alertblock}{Dynamics (SDE)}
-            \vspace{-0.3cm}
-            \begin{equation}
-            dx_t = \underbrace{u_t dt}_{\text{drift coefficient}} + \underbrace{dw_t}_{\text{diffusion coefficient}}
-            \end{equation}
-        \end{alertblock}
-        
-    \vspace{0.1cm}
-        
-        \column{0.49\textwidth}
-        \begin{alertblock}{Cost Function}
-            \vspace{-0.3cm}
-            \begin{equation}
-            J(u) = \mathbb{E}\left[\int_0^T L(x_t, u_t, t) dt + \Phi(x_T)\right]
-            \end{equation}
-            \vspace{-0.2cm}
-        \end{alertblock}
-    \end{columns}
     
-    \begin{block}{Key Components}
-        \small
-        \begin{itemize}
-            \item \textbf{State Process:} $x_t \in \mathbb{R}^d$ (position in state space at time $t$)
-            \item \textbf{Control Process:} $u_t \in \mathbb{R}^d$ (action/decision at time $t$)
-            \item \textbf{Noise Process:} $w_t$ (random disturbances, typically Brownian motion)
-            \item \textbf{Running Cost:} $L(x_t, u_t, t)$ (cost accumulated over time)
-            \item \textbf{Terminal Cost:} $\Phi(x_T)$ (cost at the final time $T$)
-        \end{itemize}
+    \begin{block}{Control-Affine Stochastic Differential Equation}
+        The general form of a controlled stochastic process:
+        \begin{equation}
+        dX_t^u = \big(b(X_t^u, t) + \sigma(t)u(X_t^u, t)\big) dt + \sqrt{\lambda}\sigma(t) dB_t
+        \end{equation}
     \end{block}
 
+            \vspace{0.3cm}
+    
+            \textbf{State Process:} $X_t^u \in \mathbb{R}^d$ (system state under control $u$ at time $t$)
+            
+            \vspace{0.3cm}
+            
+            \textbf{Drift Term:} $b(X_t^u, t) \in \mathbb{R}^d$ (natural evolution of the system)
+            
+            \vspace{0.3cm}
+            
+            \textbf{Control Term:} $\sigma(t)u(X_t^u, t) \in \mathbb{R}^d$ (how control influences the system)
+            
+            \vspace{0.3cm}
+            
+            \textbf{Diffusion Coefficient:} $\sigma(t) \in \mathbb{R}^{d \times d}$ (volatility matrix)
+            
+            \vspace{0.3cm}
+            
+            \textbf{Noise Process:} $B_t \in \mathbb{R}^d$ (Brownian motion, external randomness)
+            
+            \vspace{0.3cm}
+            
+            \textbf{Noise Intensity:} $\lambda > 0$ (controls the strength of stochastic perturbations)
+
     \note{
-    \textcolor{red}{A stochastic control problem involves finding an optimal control policy to steer a dynamical system under uncertainty while minimizing the expected cost.}
-    \\
-    \textcolor{orange}{A voir si je rajouter une autre slide qui presente la solution avec HJB + Feynman-Kac approache.}
+    \textcolor{blue}{\textbf{Control-Affine Structure:}} The "control-affine" property means the control $u$ enters linearly (affinely) in the drift term. This is the most general practical form for controlled SDEs, encompassing most applications in finance, robotics, and machine learning. \\
+    \vspace{0.1cm}
+    
+    \textcolor{blue}{J'aimerais bien mettre en context ces equations en parlant d'un steering motor pour un driverless vehicule et apres faire le lien avec les flow + diffusion models}
+    
+    \vspace{0.1cm}
+
+   \textcolor{red}{Je dois aussi expliquer l'importance que le steering input ainsi que le noise sont tous les 2 multipliés par sigma(t) ce qui signifie que ...}
     }
+\end{frame}
+
+\begin{frame}{The Optimal Control Objective}
+    \vspace{-0.3cm}
+    
+    \begin{block}{Cost Function to Minimize}
+        Find the optimal control policy $u^* \in \mathcal{U}$ that minimizes:
+        \begin{equation}
+        \min_{u \in \mathcal{U}} \mathbb{E}\left[\int_0^T \left(\frac{1}{2}\|u(X_t^u, t)\|^2 + f(X_t^u, t)\right) dt + g(X_T^u)\right]
+        \end{equation}
+    \end{block}
+
+            \vspace{0.3cm}
+    
+             \textbf{Control Effort:} $\frac{1}{2}\|u(X_t^u, t)\|^2$ (penalizes large control actions)
+
+            \vspace{0.3cm}
+
+             \textbf{Running Cost:} $f(X_t^u, t)$ (ongoing cost during the process evolution)
+
+            \vspace{0.3cm}
+
+             \textbf{Terminal Cost:} $g(X_T^u)$ (final cost based on end state at time $T$)
+            
+            \vspace{0.3cm}
+            
+             \textbf{Control Space:} $\mathcal{U}$ (set of admissible control policies)
+
+    \note{
+
+    Why dont we want to excessivly steer, this is not like overfitting but I still need to find the reason
+
+    }
+    
+    % \begin{alertblock}{Trade-off}
+    %     The optimal control balances \textcolor{red}{minimizing costs} $f$ and $g$ while \textcolor{blue}{avoiding excessive control effort} $\|u\|^2$.
+    % \end{alertblock}
 \end{frame}
 
 \begin{frame}{Classic Approach to Finding Optimal Control}
@@ -206,7 +240,9 @@
         \textcolor{blue}{\textbf{Key Insight:}} Replace discrete layers with continuous-time ODEs \\
         $\frac{dh(t)}{dt} = f_\theta(h(t), t)$ where $h(t)$ represents hidden states evolving continuously
     \end{block}
-        
+
+    \vspace{-0.3cm}
+
     \begin{columns}[t]
         \column{0.48\textwidth}
         \begin{alertblock}{Neural Network Approximation}
@@ -366,7 +402,7 @@
 \end{frame}
 
 
-\begin{frame}{The SOCM Framework}
+\begin{frame}{The SOCM Framework (1/3)}
     \small
     \begin{block}{SOCM Loss Function}
         The Stochastic Optimal Control Matching objective is defined as:
@@ -390,6 +426,58 @@
             technique to obtain low-variance estimates of the gradient of the conditional expectation of a functional of
             a random process with respect to its initial value}
 \end{frame}
+
+\begin{frame}{The SOCM Framework (2/3)}
+    \vspace{-0.3cm}
+    
+    \begin{block}{Reparameterization Function $w(t, v, X^v, B, M_t)$}
+        \small
+        The \textcolor{blue}{\textbf{target matching function}} computed via path-wise reparameterization:
+        \vspace{-0.2cm}
+        \begin{equation}
+        \begin{aligned}
+        w(t, v, X^v, B, M_t) 
+        = \sigma(t)^\top \Bigg(
+        &- \int_t^T M_t(s) \nabla_x f(X_s^v, s)\, ds 
+           \;-\; M_t(T)\nabla g(X_T^v) \\[4pt]
+        &+ \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^\top v(X_s^v, s)\, ds \\[4pt]
+        &+ \sqrt{\lambda} \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^\top dB_s
+        \Bigg)
+        \end{aligned}
+        \end{equation}
+        
+        Where $M_t(s)$ is the \textcolor{ForestGreen}{\textbf{reparameterization matrix}} (learned jointly with $u$)
+    \end{block}
+
+\end{frame}
+    
+\begin{frame}{The SOCM Framework (2/3)}
+    
+    \begin{block}{Importance Weight $\alpha(v, X^v, B)$}
+        \small
+        The \textcolor{red}{\textbf{importance sampling weight}} for measure correction:
+        \vspace{-0.2cm}
+        \begin{equation}
+        \begin{aligned}
+        \alpha(v, X^v, B) = \exp\!\Bigg(
+        &- \frac{1}{\lambda}\int_0^T f(X_t^v, t)\, dt
+        - \frac{1}{\lambda} g(X_T^v) \\[4pt]
+        &- \frac{1}{\sqrt{\lambda}} \int_0^T \langle v(X_t^v, t), dB_t \rangle
+        - \frac{1}{2\lambda} \int_0^T \| v(X_t^v, t) \|^2 dt
+        \Bigg)
+        \end{aligned}
+        \end{equation}
+
+        Incorporates \textcolor{orange}{running costs}, \textcolor{orange}{terminal costs}, and \textcolor{orange}{control effort}
+    \end{block}
+
+    \note{
+    \textcolor{blue}{\textbf{Reparameterization Matrix $M_t$:}} This matrix enables path-wise reparameterization, a technique to reduce variance in gradient estimation by reparameterizing the stochastic process. It's optimized jointly with the control $u$ to minimize the overall SOCM loss. \\
+    \vspace{0.1cm}
+    \textcolor{red}{\textbf{Importance Weight $\alpha$:}} This exponential weight corrects for the mismatch between the learned control measure and the optimal control measure. However, it can have high variance when costs are large or in high dimensions, which is the main limitation of SOCM.
+    }
+\end{frame}
+
 
 \begin{frame}{SOCM Algorithm}
     \begin{figure}
