@@ -352,20 +352,145 @@
 \end{frame}
 
 \begin{frame}{Solve SOC Problems in Low Dimension}
-
-
+    \vspace{-0.1cm}
     
+    \begin{block}{Classical Approach: Hamilton-Jacobi-Bellman PDE}
+        In small state spaces (1D, 2D, sometimes 3D), discretize the state space and solve the HJB PDE directly:
+        \begin{equation}
+        \frac{\partial V}{\partial t} + \min_u \left[ \frac{1}{2}\|u\|^2 + f(x,t) + \nabla V \cdot (b + \sigma u) + \frac{1}{2}\lambda \text{tr}(\sigma^T \nabla^2 V \sigma) \right] = 0
+        \end{equation}
+    \end{block}
+
+    \vspace{-0.4cm}
+    
+    \begin{columns}[t]
+        \column{0.48\textwidth}
+        \begin{block}{What You Get}
+            \begin{itemize}
+                \item \textcolor{ForestGreen}{\textbf{Value function:}} $V(x,t)$
+                \item \textcolor{ForestGreen}{\textbf{Optimal control:}} $u^*(x,t) = -\sigma(t)^T \nabla V(x,t)$
+                \item \textcolor{ForestGreen}{\textbf{Global optimum}} guaranteed
+                \item \textcolor{ForestGreen}{\textbf{Theoretical guarantees}} (convergence, stability)
+            \end{itemize}
+        \end{block}
+        
+        \column{0.48\textwidth}
+        \begin{alertblock}{The Curse of Dimensionality}
+            \begin{itemize}
+                \item \textcolor{red}{\textbf{Grid size:}} $\mathcal{O}(N^d)$ where $d$ is dimension
+                \item \textcolor{red}{\textbf{Memory:}} Exponential growth with $d$
+                \item \textcolor{red}{\textbf{Computation:}} Infeasible for $d > 3$
+                \item \textcolor{red}{\textbf{Impossible}} to discretize for $d \gg 1$
+            \end{itemize}
+        \end{alertblock}
+    \end{columns}
+
+
+    \note{
+        \textbf{Works perfectly in low dimensions, but state space grows exponentially with dimension.}
+
+    \textcolor{blue}{\textbf{Classical HJB:}} In low dimensions, you can discretize the entire state space on a grid and solve the HJB PDE using finite difference methods. This gives you the exact solution but becomes computationally impossible as dimension increases. \\
+    \vspace{0.1cm}
+    \textcolor{red}{\textbf{Curse of Dimensionality:}} For a $d$-dimensional problem with $N$ grid points per dimension, you need $N^d$ total grid points. Even modest problems ($d=10$, $N=100$) require $100^{10} = 10^{20}$ grid points.
+    }
 \end{frame}
 
 \begin{frame}{Solve SOC Problems in High Dimension}
-
-
+    \vspace{-0.1cm}
     
+    \begin{block}{Modern Approach: Adjoint Methods}
+        Cannot discretize high-dimensional spaces, so use \textcolor{blue}{\textbf{adjoint methods}} to optimize control directly:
+        \begin{equation}
+        \min_{u} \mathbb{E}\left[\int_0^T \left(\frac{1}{2}\|u(X_t^u, t)\|^2 + f(X_t^u, t)\right) dt + g(X_T^u)\right]
+        \end{equation}
+    \end{block}
+
+    \vspace{-0.4cm}
+
+    \begin{columns}[t]
+        \column{0.48\textwidth}
+        \begin{block}{What You Get}
+            \begin{itemize}
+                \item \textcolor{ForestGreen}{\textbf{Scalable:}} Works in high dimensions
+                \item \textcolor{ForestGreen}{\textbf{Neural networks:}} Can parameterize complex controls
+                \item \textcolor{ForestGreen}{\textbf{Gradient-based:}} Standard optimization techniques
+            \end{itemize}
+        \end{block}
+        
+        \column{0.48\textwidth}
+        \begin{alertblock}{Major Problem}
+            \begin{itemize}
+                \item \textcolor{red}{\textbf{Non-convex landscape:}} Full of local minima
+                \item \textcolor{red}{\textbf{Unstable training:}} Difficult optimization
+                \item \textcolor{red}{\textbf{No guarantees:}} May not find global optimum
+                \item \textcolor{red}{\textbf{Sensitive initialization:}} Results vary significantly
+            \end{itemize}
+        \end{alertblock}
+    \end{columns}
+    
+    \note{
+    \textbf{Highly non-convex functional landscape makes optimization extremely challenging.} \\
+    Traditional SOC methods struggle with local minima and unstable training dynamics.
+
+    \vspace{0.1cm}
+
+    \textcolor{blue}{\textbf{Adjoint Methods:}} These methods solve the forward SDE and then use the adjoint equation to compute gradients efficiently. This allows gradient-based optimization of the control parameters without discretizing the state space. \\
+    \vspace{0.1cm}
+    \textcolor{red}{\textbf{Non-convex Optimization:}} The major challenge is that the resulting optimization landscape is highly non-convex, leading to difficult optimization with many local minima and unstable training dynamics.
+    }
 \end{frame}
 
 \begin{frame}{Similar Trend in Generative Modeling}
-
+    \vspace{-0.1cm}
     
+    \begin{block}{The Same Pattern: Non-convex → Least-Squares}
+        Generative modeling experienced the same transition from non-convex to convex optimization
+    \end{block}
+        
+    \vspace{-0.4cm}
+
+    \begin{columns}[t]
+        \column{0.48\textwidth}
+        \begin{alertblock}{Continuous Normalizing Flows}
+            \small
+            \textbf{Method:} Learn invertible transformations
+            \begin{equation}
+            \frac{dx}{dt} = f_\theta(x, t)
+            \end{equation}
+            
+            \textbf{Problem:}
+            \begin{itemize}
+                \item Use \textcolor{red}{\textbf{adjoint methods}} for gradients
+                \item \textcolor{red}{\textbf{Non-convex}} optimization landscape
+                \item Difficult training, unstable dynamics
+            \end{itemize}
+        \end{alertblock}
+        
+        \column{0.48\textwidth}
+        \begin{block}{Denoising Diffusion Models}
+            \small
+            \textbf{Method:} Learn to reverse noise process
+            \begin{equation}
+            \mathbb{E}[\|\epsilon_\theta(x_t, t) - \epsilon\|^2]
+            \end{equation}
+            
+            \textbf{Advantage:}
+            \begin{itemize}
+                \item Use \textcolor{ForestGreen}{\textbf{least-squares loss}} 
+                \item \textcolor{ForestGreen}{\textbf{Convex}} functional landscape
+                \item Stable, reliable optimization
+            \end{itemize}
+        \end{block}
+    \end{columns}
+        
+    \note{
+    \textbf{Insight:} Apply the same principle to SOC! Replace non-convex adjoint methods with \textcolor{blue}{\textbf{least-squares matching}}, creating a \textcolor{ForestGreen}{\textbf{convex optimization landscape}} for stochastic optimal control.
+    \\
+    \vspace{0.1cm}
+    \textcolor{orange}{\textbf{Historical Parallel:}} Continuous Normalizing Flows (CNFs) suffered from the same optimization challenges as traditional SOC - they used adjoint methods and had non-convex landscapes. DDPMs revolutionized generative modeling by reformulating the problem as least-squares regression. \\
+    \vspace{0.1cm}
+    \textcolor{blue}{\textbf{SOCM's Contribution:}} SOCM brings the same insight to stochastic optimal control, replacing direct optimization with least-squares matching to achieve stable, convex optimization.
+    }
 \end{frame}
 
 \begin{comment}
