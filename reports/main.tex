@@ -149,11 +149,7 @@
             \textbf{Noise Intensity:} $\lambda > 0$ (controls the strength of stochastic perturbations)
 
     \note{
-    \textcolor{blue}{\textbf{Control-Affine Structure:}} The "control-affine" property means the control $u$ enters linearly (affinely) in the drift term. This is the most general practical form for controlled SDEs, encompassing most applications in finance, robotics, and machine learning. \\
-    \vspace{0.1cm}
-    
-    \textcolor{blue}{J'aimerais bien mettre en context ces equations en parlant d'un steering motor pour un driverless vehicule et apres faire le lien avec les flow + diffusion models}
-    
+    \textcolor{blue}{\textbf{Control-Affine Structure:}} The "control-affine" property means the control $u$ enters linearly (affinely) in the drift term. This is the most general practical form for controlled SDEs, encompassing most applications in finance, robotics, and machine learning. \\    
     \vspace{0.1cm}
 
    \textcolor{red}{Je dois aussi expliquer l'importance que le steering input ainsi que le noise sont tous les 2 multipliés par sigma(t) ce qui signifie que ...}
@@ -188,13 +184,48 @@
 
     \note{
 
-    Why dont we want to excessivly steer, this is not like overfitting but I still need to find the reason
-
     }
     
-    % \begin{alertblock}{Trade-off}
-    %     The optimal control balances \textcolor{red}{minimizing costs} $f$ and $g$ while \textcolor{blue}{avoiding excessive control effort} $\|u\|^2$.
-    % \end{alertblock}
+\end{frame}
+
+\begin{frame}{SOC in Practice}
+
+    \vspace{-0.3cm}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{>{\centering\arraybackslash}p{0.25\textwidth}|>{\centering\arraybackslash}p{0.22\textwidth}|>{\centering\arraybackslash}p{0.22\textwidth}|>{\centering\arraybackslash}p{0.22\textwidth}}
+            \toprule
+            \textbf{Aspect} & \textbf{Steering Actuator} & \textbf{Diffusion Models} & \textbf{Flow Models} \\
+            \midrule
+            \textbf{State $X_t$} & Vehicle position, velocity & Noisy data sample & Clean data sample \\
+            \midrule
+            \textbf{Control $u_t$} & Steering angle, throttle & Denoising direction & Flow velocity field \\
+            \midrule
+            \textbf{Dynamics Source} & \textcolor{blue}{Classical physics} (vehicle dynamics) & \textcolor{orange}{Forward noising} process & \textcolor{ForestGreen}{No natural drift} (learnable) \\
+            \midrule
+            \textbf{Drift $b(X_t,t)$} & Kinematic equations & Predetermined schedule & $b = 0$ (control learns drift) \\
+            \midrule
+            \textbf{Control Goal} & Reach target safely & Reverse noise process & Transport distributions \\
+            \midrule
+            \textbf{Noise $\sqrt{\lambda}\sigma dB_t$} & Road disturbances & Brownian motion & Optional stochasticity \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    
+    \vspace{0.3cm}
+    
+    \begin{alertblock}{Key Insight}
+        \textbf{Same mathematical framework, different physics:} SOC unifies vehicle control, generative modeling, and distribution transport under a single theoretical umbrella.
+    \end{alertblock}
+
+    \note{
+    \textcolor{blue}{\textbf{Steering Actuator:}} The dynamics come from well-established physics - Newton's laws, kinematics, and vehicle dynamics. The control optimizes safety and efficiency. \\
+    \vspace{0.1cm}
+    \textcolor{orange}{\textbf{Diffusion Models:}} The drift is determined by the forward noising process (e.g., $\beta(t)$), and control learns to reverse this predetermined corruption. \\
+    \vspace{0.1cm}
+    \textcolor{ForestGreen}{\textbf{Flow Models:}} No natural drift exists - the control $u_t$ directly becomes the drift term, learning the entire velocity field that transports distributions.
+    }
 \end{frame}
 
 \begin{frame}{Classic Approach to Finding Optimal Control}
