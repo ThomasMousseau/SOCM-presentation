@@ -6,6 +6,7 @@
 \setbeameroption{show notes} %TODO: Thomas a enlever avant la presentation
 \usetheme{SimplePlus}
 
+\usepackage{comment}
 \usepackage{hyperref}
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
@@ -202,7 +203,7 @@
             \midrule
             \textbf{Control $u_t$} & Steering angle, throttle & Denoising direction & Flow velocity field \\
             \midrule
-            \textbf{Dynamics Source} & \textcolor{blue}{Classical physics} (vehicle dynamics) & \textcolor{orange}{Forward noising} process & \textcolor{ForestGreen}{No natural drift} (learnable) \\
+            \textbf{Dynamics Source} & \textcolor{blue}{Newtonian mechanics} (vehicle dynamics) & \textcolor{orange}{Forward noising} process & \textcolor{ForestGreen}{No natural drift} (learnable) \\
             \midrule
             \textbf{Drift $b(X_t,t)$} & Kinematic equations & Predetermined schedule & $b = 0$ (control learns drift) \\
             \midrule
@@ -228,6 +229,8 @@
     }
 \end{frame}
 
+
+\begin{comment}
 \begin{frame}{Classic Approach to Finding Optimal Control}
     \begin{block}{Optimal Control $u^*$}
         Find the control policy $u^*$ that minimizes the expected cost: $u^* = \arg\min_u J(u)$
@@ -252,19 +255,9 @@
     \textcolor{blue}{\textbf{HJB Equation:}} The Hamilton-Jacobi-Bellman equation provides the theoretical foundation for solving stochastic optimal control problems by characterizing the value function $V(x,t)$ as the solution to a nonlinear PDE. The optimal control is then $u^*(x,t) = \arg\min_u [\cdots]$ from the HJB equation.
     }
 \end{frame}
+\end{comment}
 
-
-
-%TODO: A voir si je veux expliquer ce qu'est une Adjoint Method?!?!??!?!?!?
-
-%TODO: A voir encore si je ne veux pas faire un lien avec RL ou meme directement presente la HJB et demontrer que ls Jacobienne devient difficulement calculate (prix computationnel trop eleve) a plusieurs dimensions
-%! For continuous-time problems with low-dimensional state spaces, the standard approach to learn
-%! the optimal control is to solve the Hamilton-Jacobi-Bellman (HJB) partial differential equation
-%! (PDE) by gridding the space and using classical numerical methods. For high-dimensional problems,
-%! a large number of works parameterize the control using a neural network and train it applying a
-%! stochastic optimization algorithm on a loss function. These methods are known as Iterative Diffusion
-%! Optimization (IDO) techniques [59] (see Subsec. 2.2).
-
+\begin{comment}
 \begin{frame}{Neural PDE Solvers for SOC}
     
     \begin{block}{Core Innovation: Neural ODEs (Chen et al., 2018)}
@@ -324,6 +317,7 @@
     \textcolor{ForestGreen}{\textbf{Physics-Informed Neural Networks:}} The key is training networks to satisfy the HJB equation through the residual loss, making the physics constraints part of the optimization objective.
     }
 \end{frame}
+\end{comment}
 
 %------------------------------------------------
 \section{Stochastic Optimal Control Matching}
@@ -408,6 +402,7 @@
     \end{table}
 \end{frame}
 
+\begin{comment}
 \begin{frame}{Introducing Stochastic Optimal Control Matching}
     SOCM offers a more principled, stable, and accurate way to learn generative dynamics by blending stochastic control theory with modern matching-based generative modeling.
     
@@ -431,32 +426,63 @@
         \end{enumerate}
     \end{block}
 \end{frame}
+\end{comment}
 
-
-\begin{frame}{The SOCM Framework (1/3)}
+\begin{frame}{SOCM Framework: From Classical SOC to SOCM}
     \small
-    \begin{block}{SOCM Loss Function}
-        The Stochastic Optimal Control Matching objective is defined as:
+    \begin{block}{Dynamics (Same for Both)}
         \begin{equation}
-        \mathcal{L}_{SOCM}(u, M) := \mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X^v_t, t) - w(t, v, X^v, B, M_t)\|^2 dt \times \alpha(v, X^v, B)\right]
+        dX^v_t = (b(X^v_t, t) + \sigma(t)v(X^v_t, t)) dt + \sqrt{\lambda}\sigma(t) dB_t \text{, with } X^v_0 \sim p_0
         \end{equation}
     \end{block}
 
-    \begin{block}{Where:}
-        \begin{itemize}
-            \item $X^v$ is the process controlled by $v$: 
-            \begin{equation}
-            dX^v_t = (b(X^v_t, t) + \sigma(t)v(X^v_t, t)) dt + \sqrt{\lambda}\sigma(t) dB_t \text{, with } X^v_0 \sim p_0
-            \end{equation} 
-            \item $u(X^v_t, t)$ is the control policy being learned
-            \item $w(t, v, X^v, B, M_t)$ is the target matching function
-            \item $\alpha(v, X^v, B)$ is a weighting function
-        \end{itemize}
+    \begin{block}{Original SOC Cost Function}
+        \begin{equation}
+        \min_{u \in \mathcal{U}} \mathcal{L}_{SOC} := \mathbb{E}\left[\int_0^T \left(\frac{1}{2}\|u(X_t^u, t)\|^2 + f(X_t^u, t)\right) dt + g(X_T^u)\right]
+        \end{equation}
     \end{block}
-    \note{Ici, je dois presenter en details la matrice Mt, B ainsi que w. De plus, je veux expliquer l'intuition du path-wise reparameterization trick, a novel
-            technique to obtain low-variance estimates of the gradient of the conditional expectation of a functional of
-            a random process with respect to its initial value}
+
+    \begin{alertblock}{SOCM Cost Function}
+        \begin{equation}
+        \min_{u, M} \mathcal{L}_{SOCM}(u, M) := \mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X^v_t, t) - w(t, v, X^v, B, M_t)\|^2 dt \times \alpha(v, X^v, B)\right]
+        \end{equation}
+    \end{alertblock}
+
+    \vspace{0.2cm}
+    \small
+    \textbf{Key Point:} Same underlying stochastic dynamics, but SOCM uses a \textcolor{blue}{least-squares matching approach} instead of direct minimization of the original cost.
 \end{frame}
+
+\begin{frame}{SOCM Parameters Definition}
+    
+    $$\min_{\textcolor{blue}{u}, \textcolor{red}{M}} \mathcal{L}_{SOCM}(\textcolor{blue}{u}, \textcolor{red}{M}) := \mathbb{E}\left[\frac{1}{T}\int_0^T \|\textcolor{blue}{u}(X^{\textcolor{orange}{v}}_t, t) - \textcolor{ForestGreen}{w}(t, \textcolor{orange}{v}, X^{\textcolor{orange}{v}}, B, \textcolor{red}{M_t})\|^2 dt \times \textcolor{purple}{\alpha}(\textcolor{orange}{v}, X^{\textcolor{orange}{v}}, B)\right]$$
+        
+    \begin{block}{Where:}
+            $u : \mathbb{R}^d \times [0,1] \rightarrow \mathbb{R}^d$ is the \textcolor{blue}{\textbf{control}} (policy being learned)
+            \vspace{0.1cm} \\
+            $v$ is a \textcolor{orange}{\textbf{fixed arbitrary control}}, $X^v$ is the solution of the SDE with control $v$
+            \vspace{0.1cm} \\
+            $M : [0,1]^2 \rightarrow \mathbb{R}^{d \times d}$ is the \textcolor{red}{\textbf{reparameterization matrix}}
+            \vspace{0.1cm} \\
+            $w$ is the \textcolor{ForestGreen}{\textbf{matching vector field}} (target for $u$ to match)
+            \vspace{0.1cm} \\
+            $\alpha$ is the \textcolor{purple}{\textbf{importance weight}} (for measure correction)
+    \end{block}
+        
+    \begin{alertblock}{Key Dependencies}
+        $w$ and $\alpha$ depend on $f$, $g$, $\lambda$, $\sigma$
+    \end{alertblock}
+
+    \note{
+    \textcolor{blue}{\textbf{Control $u$:}} This is what we're trying to learn - the optimal policy that minimizes our cost function. \\
+    \vspace{0.1cm}
+    \textcolor{orange}{\textbf{Arbitrary Control $v$:}} Used to generate sample trajectories for training. The choice of $v$ affects the efficiency but not the correctness of SOCM. \\
+    \vspace{0.1cm}
+    \textcolor{red}{\textbf{Reparameterization Matrix $M$:}} Jointly optimized with $u$ to reduce variance in the gradient estimation through path-wise reparameterization.
+    }
+\end{frame}
+
+
 
 \begin{frame}{The SOCM Framework (2/3)}
     \vspace{-0.3cm}
