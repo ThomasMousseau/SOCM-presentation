@@ -651,7 +651,7 @@
 
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Matching Vector Field (2/2) - Derivation Steps}
+\begin{frame}[allowframebreaks]{Matching Vector Field (2/2) - Path Integral}
     \vspace{-0.3cm}
     
     % Make section titles more prominent
@@ -670,62 +670,83 @@
     \subsection*{Starting Point: Value Function Definition}
     
     The value function is defined as the infimum over all controls:
-    $$V(x,t) = \inf_u J(u; x,t) = \inf_u \mathbb{E}\left[\int_t^T \left(\frac{1}{2}\|u\|^2 + f\right) ds + g(X_T) \,\middle|\, X_t = x\right]$$
+    $$V(x,t) = \inf_u J(u; x,t) = \inf_u \mathbb{E}\left[\int_t^T \left(\frac{1}{2}\|u(X_s^u, s)\|^2 + f(X_s^u, s)\right) ds + g(X_T^u) \,\middle|\, X_t^u = x\right]$$
     
     \vspace{0.5cm}
     
     \subsection*{Infinitesimal Generator and HJB Equation}
     
-    The \textcolor{blue}{\textbf{infinitesimal generator}} $L$ of the uncontrolled diffusion $dX_t = b \, dt + \sqrt{\lambda} \sigma \, dB_t$ is:
-    $$L = b \cdot \nabla + \frac{\lambda}{2} \text{tr}(\sigma \sigma^T \nabla^2)$$
+    Assume $\sigma(t)$ is invertible and enters both drift (via $\sigma u$) and diffusion, and control cost is quadratic. This enables the Cole-Hopf linearization.
     
-    The Hamilton-Jacobi-Bellman equation becomes:
-    $$\frac{\partial V}{\partial t} + LV + \inf_u \left[\frac{1}{2}\|u\|^2 + f + u^T \sigma^T \nabla V\right] = 0$$
+    The \textcolor{blue}{\textbf{infinitesimal generator}} $L$ of the uncontrolled diffusion $dX_t = b(x,t) \, dt + \sqrt{\lambda} \sigma(t) \, dB_t$ is:
+    $$L := \frac{\lambda}{2} \sum_{i,j=1}^d (\sigma\sigma^\top)_{ij}(t) \frac{\partial^2}{\partial x_i \partial x_j} + \sum_{i=1}^d b_i(x,t) \frac{\partial}{\partial x_i}$$
+    
+    The Hamilton-Jacobi-Bellman equation becomes (minimize pointwise in $(x,t)$):
+    $$\frac{\partial V}{\partial t} + LV + \inf_u \left[\frac{1}{2}\|u\|^2 + \langle\sigma^\top \nabla V, u\rangle + f\right] = 0$$
     
     \vspace{0.5cm}
     
     \subsection*{Deriving the Optimal Control}
     
-    To find the infimum, we differentiate the expression inside the brackets with respect to $u$:
-    $$\frac{\partial}{\partial u}\left[\frac{1}{2}\|u\|^2 + u^T \sigma^T \nabla V\right] = u + \sigma^T \nabla V = 0$$
+    To find the infimum, we differentiate the quadratic expression with respect to $u$ (complete the square):
+    $$\frac{\partial}{\partial u}\left[\frac{1}{2}\|u\|^2 + \langle\sigma^\top \nabla V, u\rangle\right] = u + \sigma^\top \nabla V = 0$$
     
     This gives us the \textcolor{red}{\textbf{optimal control}}:
-    $$u^*(x,t) = -\sigma^T(t)\nabla V(x,t)$$
+    $$u^*(x,t) = -\sigma^\top(t)\nabla V(x,t)$$
     
     Substituting back into the HJB equation:
-    $$\frac{\partial V}{\partial t} + LV - \frac{1}{2}\|\sigma^T \nabla V\|^2 + f = 0, \quad V(x,T) = g(x)$$
+    $$\frac{\partial V}{\partial t} + LV - \frac{1}{2}\|\sigma^\top \nabla V\|^2 + f = 0, \quad V(x,T) = g(x)$$
     
     \vspace{0.8cm}
     
-    \subsection*{Key Insight: Path-integral Value Function}
-    
-    For the \textcolor{blue}{\textbf{uncontrolled SDE}} $dX_t = b \, dt + \sqrt{\lambda} \sigma \, dB_t$, the value function has a path-integral representation:
-    
-    $$V(x,t) = -\lambda \log \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+    \begin{alertblock}{Reminder (Linear Case)}
+        If $\frac{\partial w}{\partial t} + Lw + q = 0$ with $w(x,T) = h(x)$, then Feynman-Kac gives:
+        $$w(x,t) = \mathbb{E}\left[h(X_T) - \int_t^T q(X_s,s) ds \,\middle|\, X_t = x\right]$$
+        
+        \textbf{The HJB for $V$ is nonlinear; we apply Feynman-Kac to the linear PDE for $\phi$, then set $V = -\lambda \log \phi$.}
+    \end{alertblock}
+
+    \textbf{Cole-Hopf transformation:} $V(x,t) = -\lambda \log \phi(x,t)$
+
+    \textbf{Linearized PDE for $\phi$:} 
+    $$\frac{\partial \phi}{\partial t} + L\phi + \frac{1}{\lambda}f\phi = 0, \quad \phi(x,T) = e^{-g(x)/\lambda}$$
+
+    \textbf{Feynman-Kac applied to $\phi$:}
+    $$\phi(x,t) = \mathbb{E}_0\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right] \text{ (uncontrolled SDE)}$$
+
+    \textbf{Converting back:} $V(x,t) = -\lambda \log \phi(x,t)$
     
     \vspace{0.8cm}
     
     \subsection*{Result: Lemma 1}
     
-    Combining the optimal control formula with the path-integral representation:
+    Set $Z(x,t) := \phi(x,t)$, so the \textcolor{orange}{\textbf{partition function}} is:
+    $$Z(x,t) = \mathbb{E}_0\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+    
+    Then the optimal control becomes:
     
     \begin{alertblock}{Path-integral Optimal Control}
-        $$u^*(x,t) = \lambda \, \sigma^T(t) \, \nabla_x \log \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+        $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log Z(x,t)$$
+        $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log \mathbb{E}_0\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+
+        \footnotesize{$\nabla_x$ is the gradient w.r.t. the initial condition $X_t = x$, not a terminal-state score.}
     \end{alertblock}
     
     \vspace{0.8cm}
     
     \begin{block}{Why This Matters}
-        \textbf{Key Achievement:} This eliminates $V$ from the formula for $u^*$ and reframes \textcolor{ForestGreen}{\textbf{"learning a control"}} as \textcolor{blue}{\textbf{learning a score}} (a gradient of a log-partition function over paths).
+        \textbf{Key Achievement:} We eliminate $V$ to avoid solving a nonlinear PDE and reframe the control as a \textcolor{blue}{\textbf{score function}} $\nabla_x \log Z(x,t)$.
         
         \vspace{0.3cm}
         
-        This is exactly the kind of signal we can estimate and match via \textcolor{red}{\textbf{least squares}} — setting up the foundation for SOCM's approach.
+        We avoid solving a nonlinear PDE and instead target a score that admits a pathwise estimator (next slide). This sets up a score we can approximate with a \textcolor{ForestGreen}{\textbf{low-variance pathwise estimator}} in Step 2, which will become the matching vector field $w$. This is the foundation for SOCM's \textcolor{red}{\textbf{least-squares matching}} approach.
     \end{block}
     
     \framebreak
-    
-    % Step 2 on next frame break
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Matching Vector Field (2/3) - Reparam}
+
     \begin{center}
         \Large\textcolor{red}{\textbf{Step 2 — Path-wise Reparameterization Trick}}
     \end{center}
@@ -736,11 +757,101 @@
         Direct estimation of the path-integral in Step 1 has high variance and is computationally intractable for complex problems.
     \end{block}
     
-    % Add Step 2 content here...
+    \vspace{0.5cm}
     
+    \subsection*{The Problem with Naive Estimation}
+    
+    From Step 1, we need to estimate:
+    $$u^*(x,t) = \lambda \sigma^T(t) \nabla_x \log Z(x,t)$$
+    
+    where $Z(x,t) = \mathbb{E}_0[\exp(-\frac{1}{\lambda}\int_t^T f + \frac{1}{\lambda}g) | X_t = x]$
+    
+    \textbf{Direct approach:} Estimate $\nabla_x \log Z(x,t)$ by:
+    \begin{itemize}
+        \item Sample paths from uncontrolled SDE
+        \item Compute finite differences for gradients
+        \item \textcolor{red}{\textbf{High variance}} due to exponential weights
+        \item \textcolor{red}{\textbf{Biased}} finite difference approximations
+    \end{itemize}
+    
+    \vspace{0.8cm}
+    
+    \subsection*{Key Insight: Path-wise Reparameterization}
+    
+    Instead of estimating gradients of expectations, we use the \textcolor{blue}{\textbf{path-wise gradient identity}}:
+    
+    $$\nabla_x \mathbb{E}[h(X)] = \mathbb{E}[\nabla_x h(X) + h(X) \cdot \nabla_x \log p(X)]$$
+    
+    where $p(X)$ is the path measure density.
+    
+    \vspace{0.5cm}
+    
+    \textbf{This allows us to:}
+    \begin{itemize}
+        \item Move the gradient \textcolor{ForestGreen}{\textbf{inside}} the expectation
+        \item Compute exact gradients along sample paths
+        \item Avoid finite difference approximations
+        \item Reduce variance significantly
+    \end{itemize}
+    
+    \vspace{0.8cm}
+    
+    \subsection*{Introducing the Reparameterization Matrix $M_t(s)$}
+    
+    To implement path-wise reparameterization effectively, we introduce a matrix $M_t(s)$ where:
+    \begin{itemize}
+        \item $M_t : [t,T] \rightarrow \mathbb{R}^{d \times d}$ is a \textcolor{red}{\textbf{learnable matrix function}}
+        \item Acts as a "change of variables" for the gradient computation
+        \item \textcolor{blue}{\textbf{Optimized jointly}} with control $u$ to minimize variance
+        \item Enables efficient gradient flow through stochastic integrals
+    \end{itemize}
+    
+    \vspace{0.8cm}
+    
+    \subsection*{Result: The Matching Vector Field $w$}
+    
+    After applying path-wise reparameterization, we get:
+    
+    \begin{alertblock}{Path-wise Reparameterized Control}
+        \begin{equation}
+        \begin{aligned}
+        w(t, v, X^v, B, M_t) 
+        = \sigma(t)^\top \Bigg(
+        &\textcolor{orange}{- \int_t^T M_t(s) \nabla_x f(X_s^v, s)\, ds - M_t(T)\nabla g(X_T^v)} \\[4pt]
+        &\textcolor{blue}{+ \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^\top v(X_s^v, s)\, ds} \\[4pt]
+        &\textcolor{ForestGreen}{+ \sqrt{\lambda} \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^\top dB_s}
+        \Bigg)
+        \end{aligned}
+        \end{equation}
+    \end{alertblock}
+    
+    \vspace{0.5cm}
+    
+    \textbf{Component breakdown:}
+    \begin{itemize}
+        \item \textcolor{orange}{\textbf{Cost terms:}} Direct path-wise gradients of running and terminal costs
+        \item \textcolor{blue}{\textbf{Drift correction:}} Accounts for arbitrary control $v$ and matrix dynamics
+        \item \textcolor{ForestGreen}{\textbf{Stochastic integral:}} The key innovation - exact gradient through Brownian motion
+    \end{itemize}
+    
+    \vspace{0.8cm}
+    
+    \begin{block}{Why This Works}
+        \textbf{Key Achievement:} We transform the high-variance score estimation problem into a \textcolor{red}{\textbf{tractable regression target}} $w$ that can be:
+        \begin{itemize}
+            \item Computed exactly along sample paths
+            \item Used as a target for least-squares matching: $\min_u \mathbb{E}[\|u(X^v_t,t) - w(\cdot)\|^2]$
+            \item Optimized jointly with $M_t$ to minimize variance
+        \end{itemize}
+        
+        This sets up Step 3: using Girsanov theorem to handle the measure change from arbitrary control $v$ to optimal control.
+    \end{block}
+        
     \framebreak
-    
-    % Step 3 on next frame break
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Matching Vector Field (3/3) - Girsanov Theorem}
+
     \begin{center}
         \Large\textcolor{ForestGreen}{\textbf{Step 3 — Girsanov Theorem Application}}
     \end{center}
@@ -748,11 +859,93 @@
     \vspace{0.3cm}
     
     \begin{block}{The Goal}
-        Transform the uncontrolled process into a controlled process using measure theory.
+        Transform expectations from the uncontrolled process to a controlled process using measure theory.
     \end{block}
     
-    % Add Step 3 content here...
-
+    \vspace{0.5cm}
+    
+    \subsection*{The Challenge: Measure Mismatch}
+    
+    From Step 2, we have the matching vector field $w$ computed under the \textcolor{blue}{\textbf{uncontrolled}} process. But in practice, we need to train on trajectories we can actually generate using a reference control $v$.
+    
+    \textbf{Controlled SDE:} We simulate trajectories with reference control $v$:
+    $$dX_s^v = (b + \sigma v)(X_s^v, s) ds + \sqrt{\lambda} \sigma(s) dB_s$$
+    
+    \textbf{Problem:} Expectations are under different measures!
+    \begin{itemize}
+        \item Our theory assumes the \textcolor{red}{uncontrolled} measure 
+        \item Our training uses the \textcolor{blue}{controlled} measure with $v$
+    \end{itemize}
+    
+    \vspace{0.8cm}
+    
+    \subsection*{Girsanov Theorem to the Rescue}
+    
+    The Girsanov theorem allows us to change measures from uncontrolled to controlled via an \textcolor{orange}{\textbf{importance weight}}:
+    
+    \begin{alertblock}{Importance Weight $\alpha(v, X^v, B)$}
+        \begin{equation}
+        \begin{aligned}
+        \alpha(v, X^v, B) = \exp\!\Bigg(
+        &\textcolor{red}{- \frac{1}{\lambda}\int_0^T f(X_t^v, t)\, dt - \frac{1}{\lambda} g(X_T^v)} \\[4pt]
+        &\textcolor{blue}{- \frac{1}{\sqrt{\lambda}} \int_0^T \langle v(X_t^v, t), dB_t \rangle} \\[4pt]
+        &\textcolor{ForestGreen}{- \frac{1}{2\lambda} \int_0^T \| v(X_t^v, t) \|^2 dt}
+        \Bigg)
+        \end{aligned}
+        \end{equation}
+    \end{alertblock}
+    
+    \textbf{Component breakdown:}
+    \begin{itemize}
+        \item \textcolor{red}{\textbf{Cost terms:}} Running cost $f$ and terminal cost $g$
+        \item \textcolor{blue}{\textbf{Stochastic correction:}} Accounts for the stochastic integral with control $v$
+        \item \textcolor{ForestGreen}{\textbf{Control effort:}} Quadratic penalty for control magnitude
+    \end{itemize}
+    
+    \vspace{0.8cm}
+    
+    \subsection*{Brownian Motion Shift}
+    
+    Under the new measure, the Brownian motion transforms as:
+    $$dB_s = dB_s^{(v)} - \frac{1}{\sqrt{\lambda}} v(X_s^v, s) ds$$
+    
+    This \textcolor{orange}{\textbf{Brownian shift}} splits the stochastic term from Step 2 into:
+    $$\sqrt{\lambda} \int_t^T (M_t\nabla_x b - \partial_s M_t)(\sigma^{-1})^T dB_s = \underbrace{\sqrt{\lambda} \int_t^T (\cdots) dB_s^{(v)}}_{\text{martingale}} - \underbrace{\int_t^T (M_t\nabla_x b - \partial_s M_t)(\sigma^{-1})^T v \, ds}_{\text{deterministic}}$$
+    
+    \vspace{0.8cm}
+    
+    \subsection*{Final Result: Complete Matching Vector Field}
+    
+    Combining all three steps and multiplying by $\sigma^T(t)$ from Lemma 1:
+    
+    \begin{alertblock}{Complete SOCM Matching Target}
+        \begin{equation}
+        \begin{aligned}
+        w(t, v, X^v, B, M_t) = \sigma(t)^T \Bigg(
+        &\textcolor{red}{- \int_t^T M_t(s) \nabla_x f(X_s^v, s)\, ds - M_t(T)\nabla g(X_T^v)} \\[4pt]
+        &\textcolor{blue}{+ \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^T v(X_s^v, s)\, ds} \\[4pt]
+        &\textcolor{ForestGreen}{+ \sqrt{\lambda} \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^T dB_s^{(v)}}
+        \Bigg)
+        \end{aligned}
+        \end{equation}
+    \end{alertblock}
+    
+    \vspace{0.8cm}
+    
+    \begin{block}{Why Girsanov is Essential}
+        \textbf{Key Achievement:} We can now train on trajectories generated with reference control $v$, while the importance weight $\alpha$ corrects for the distributional mismatch.
+        
+        \vspace{0.3cm}
+        
+        This ensures the target remains \textcolor{blue}{\textbf{unbiased}} for the true optimum, enabling practical implementation of SOCM with:
+        \begin{itemize}
+            \item Computable matching targets $w$ from sample paths
+            \item Proper measure correction via $\alpha$
+            \item Least-squares objective: $\min_{u,M} \mathbb{E}[\|u(X^v_t,t) - w(\cdot)\|^2 \times \alpha]$
+        \end{itemize}
+    \end{block}
+    
+    \framebreak
 \end{frame}
 
     
@@ -781,6 +974,86 @@
     \vspace{0.1cm}
     \textcolor{red}{\textbf{Importance Weight $\alpha$:}} This exponential weight corrects for the mismatch between the learned control measure and the optimal control measure. However, it can have high variance when costs are large or in high dimensions, which is the main limitation of SOCM.
     }
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Bias-Variance Decomposition of the SOCM Loss}
+    
+    \begin{block}{Key Insight: Clean Separation}
+        The SOCM loss decomposes cleanly into two independent components:
+        \begin{itemize}
+            \item \textcolor{blue}{\textbf{Bias term:}} Depends only on control $u$, minimized at $u^*$
+            \item \textcolor{red}{\textbf{Variance term:}} Depends only on reparameterization matrices $M_t$
+        \end{itemize}
+    \end{block}
+    
+    \vspace{0.5cm}
+    
+    \begin{alertblock}{SOCM Loss Decomposition (Proposition 2)}
+        \begin{equation}
+        \underbrace{\mathcal{L}_{SOCM}(u, M)}_{\text{what we minimize}} = \underbrace{\mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X_t^{u^*}, t) - u^*(X_t^{u^*}, t)\|^2 dt \, e^{-V(X^{u^*}, 0)/\lambda}\right]}_{\textcolor{blue}{\text{Bias of } u \text{ (= CE landscape)}}} + \underbrace{\text{CondVar}(w; M)}_{\textcolor{red}{\text{Variance of } w \text{ (tuned by } M \text{)}}}
+        \end{equation}
+    \end{alertblock}
+    
+    \vspace{0.8cm}
+    
+    \subsection*{Connection to Cross-Entropy (CE) Loss}
+    
+    \begin{block}{Same Optimization Landscape in $u$ (Lemma 2)}
+        The \textcolor{blue}{\textbf{bias term}} in SOCM is \textbf{exactly} the cross-entropy loss landscape:
+        \begin{itemize}
+            \item \textcolor{ForestGreen}{\textbf{Same optimum:}} Both minimize at $u^*$
+            \item \textcolor{ForestGreen}{\textbf{Same landscape:}} Identical curvature and critical points in $u$
+            \item \textcolor{orange}{\textbf{Different formulation:}} SOCM uses least-squares regression to target $w$
+        \end{itemize}
+    \end{block}
+
+    \vspace{-0.5cm}
+    \subsection*{Role of Reparameterization Matrix $M_t$}
+    
+    \begin{columns}[t]
+        \column{0.48\textwidth}
+        \begin{block}{What $M_t$ Does}
+            \begin{itemize}
+                \item \textcolor{red}{\textbf{Variance reduction only:}} Does not change the optimum $u^*$
+                \item \textcolor{blue}{\textbf{Stabilizes gradients:}} Reduces noise in the matching target $w$
+                \item \textcolor{ForestGreen}{\textbf{Improves convergence:}} Better sample efficiency and stability
+            \end{itemize}
+        \end{block}
+        
+        \column{0.48\textwidth}
+        \begin{alertblock}{What $M_t$ Does NOT Do}
+            \begin{itemize}
+                \item \textcolor{red}{\textbf{Does not change bias:}} $u^*$ remains the same
+                \item \textcolor{red}{\textbf{Does not alter optimum:}} Same solution as CE methods
+                \item \textcolor{red}{\textbf{Pure variance control:}} Only affects the conditional variance $\text{CondVar}(w; M)$
+            \end{itemize}
+        \end{alertblock}
+    \end{columns}
+    
+    \vspace{0.8cm}
+    
+    \begin{block}{SOCM = Cross-Entropy + Variance Reduction}
+        \textbf{Practical Interpretation:}
+        \begin{itemize}
+            \item SOCM keeps the \textcolor{blue}{\textbf{same objective}} and \textcolor{blue}{\textbf{optimum}} as cross-entropy methods
+            \item But reformulates it as a \textcolor{ForestGreen}{\textbf{least-squares regression}} problem: $\min_u \mathbb{E}[\|u - w\|^2]$
+            \item Introduces explicit \textcolor{red}{\textbf{variance reduction}} via learnable matrices $M_t$
+            \item Results in \textcolor{orange}{\textbf{better gradients}}, \textcolor{orange}{\textbf{faster convergence}}, and \textcolor{orange}{\textbf{more stable training}}
+        \end{itemize}
+    \end{block}
+    
+    \vspace{0.8cm}
+    
+    \begin{alertblock}{Why This Matters}
+        This decomposition explains SOCM's empirical success:
+        \begin{enumerate}
+            \item \textcolor{blue}{\textbf{Theoretical equivalence:}} Same optimum as proven CE methods
+            \item \textcolor{red}{\textbf{Practical advantage:}} Explicit variance control improves optimization
+            \item \textcolor{ForestGreen}{\textbf{Best of both worlds:}} CE's guarantees + diffusion models' stability
+        \end{enumerate}
+    \end{alertblock}
+    
 \end{frame}
 
 
@@ -798,9 +1071,70 @@
 
 \section{Experiments and results}
 
-\begin{frame}{Ornstein Uhlenbeck Process}
-    \begin{block}{Definition}
-        The Ornstein-Uhlenbeck process is a stochastic process that describes the evolution of a variable over time, incorporating both deterministic and stochastic elements. It is often used to model mean-reverting behavior in financial markets and other systems.
+\begin{frame}[allowframebreaks]{Ornstein-Uhlenbeck Process Benchmarks}
+    \vspace{-0.3cm}
+    
+    \begin{block}{What's an Ornstein-Uhlenbeck (OU) Process?}
+        A \textcolor{blue}{\textbf{mean-reverting}} stochastic differential equation with linear drift and Gaussian noise:
+        $$dX_t = \theta(\mu - X_t) dt + \sigma dB_t \quad \text{(1D case)}$$
+        
+        For multi-dimensional benchmarks: $dX_t = Ax dt + \sigma dB_t$ with linear drift $b(x,t) = Ax$
+    \end{block}
+    
+    \vspace{0.5cm}
+    
+    \begin{columns}[t]
+        \column{0.48\textwidth}
+        \begin{alertblock}{Quadratic OU (LQR Class)}
+            \small
+            \textbf{Dynamics:} OU with quadratic costs
+            $$f(x,t) = x^T P x, \quad g(x) = x^T Q x$$
+            
+            \textbf{Key Feature:} This is a \textcolor{red}{\textbf{Linear-Quadratic Regulator}} problem
+            
+            \textbf{Optimal Control (Known):}
+            $$u_t^*(x) = -2\sigma_0^T F_t x$$
+            where $F_t$ solves a Riccati ODE
+            
+            \textcolor{ForestGreen}{\textbf{Perfect for testing:}} Can measure exact $L_2$ control error!
+        \end{alertblock}
+        
+        \column{0.48\textwidth}
+        \begin{block}{Linear OU}
+            \small
+            \textbf{Dynamics:} Linear drift $b(x,t) = Ax$
+            
+            \textbf{Costs:} 
+            \begin{itemize}
+                \item No running cost: $f = 0$
+                \item Linear terminal: $g(x) = \langle\gamma, x\rangle$
+            \end{itemize}
+            
+            \textbf{Optimal Control:} Also available in \textcolor{blue}{\textbf{closed form}}
+            
+            \textcolor{orange}{\textbf{Simpler case}} for initial validation
+        \end{block}
+    \end{columns}
+    
+    \vspace{0.8cm}
+    
+    \begin{alertblock}{Double-Well (Challenging Nonlinear Case)}
+        \textbf{Nonlinear drift from quartic potential:} $\Psi(x) = \sum_i \kappa_i (x_i^2 - 1)^2$ 
+        
+        \textbf{Multimodal terminal cost:} $g(x)$ has $2^d$ modes (exponentially many!)
+        
+        \textcolor{red}{\textbf{Highly challenging:}} Tests algorithm stability in complex, multimodal landscapes
+    \end{alertblock}
+    
+    \vspace{0.5cm}
+    
+    \begin{block}{Why OU-type Problems are Standard SOC Testbeds}
+        \begin{itemize}
+            \item \textcolor{blue}{\textbf{Ground truth available:}} Analytic $u^*$ for LQR/linear cases → direct $L_2$ control error measurement
+            \item \textcolor{orange}{\textbf{Controlled difficulty:}} Can dial complexity via matrix scaling ($A$, $P$, $Q$ parameters)
+            \item \textcolor{ForestGreen}{\textbf{Stress test variance:}} Reveals importance weight and gradient signal-to-noise issues
+            \item \textcolor{red}{\textbf{Multimodal landscapes:}} Double-Well tests stability in challenging optimization scenarios
+        \end{itemize}
     \end{block}
 \end{frame}
 

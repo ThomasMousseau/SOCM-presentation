@@ -36,48 +36,104 @@
 \headcommand {\beamer@framepages {24}{24}}
 \headcommand {\beamer@subsectionpages {12}{24}}
 \headcommand {\beamer@subsectionentry {0}{2}{1}{25}{Starting Point: Value Function Definition}}
-\headcommand {\slideentry {2}{5}{0}{25/25}{}{0}}
+\headcommand {\slideentry {2}{4}{0}{25/25}{}{0}}
 \headcommand {\beamer@framepages {25}{25}}
 \headcommand {\beamer@subsectionpages {25}{24}}
 \headcommand {\beamer@subsectionentry {0}{2}{2}{25}{Infinitesimal Generator and HJB Equation}}
-\headcommand {\beamer@subsectionpages {25}{24}}
-\headcommand {\beamer@subsectionentry {0}{2}{3}{25}{Deriving the Optimal Control}}
-\headcommand {\slideentry {2}{5}{0}{25/26}{}{0}}
+\headcommand {\slideentry {2}{4}{0}{25/26}{}{0}}
 \headcommand {\beamer@framepages {25}{26}}
 \headcommand {\beamer@subsectionpages {25}{24}}
-\headcommand {\beamer@subsectionentry {0}{2}{4}{25}{Key Insight: Path-integral Value Function}}
-\headcommand {\slideentry {2}{5}{0}{25/27}{}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{3}{25}{Deriving the Optimal Control}}
+\headcommand {\slideentry {2}{4}{0}{25/27}{}{0}}
 \headcommand {\beamer@framepages {25}{27}}
-\headcommand {\beamer@subsectionpages {25}{24}}
-\headcommand {\beamer@subsectionentry {0}{2}{5}{25}{Result: Lemma 1}}
-\headcommand {\slideentry {2}{5}{0}{25/28}{}{0}}
+\headcommand {\slideentry {2}{4}{0}{25/28}{}{0}}
 \headcommand {\beamer@framepages {25}{28}}
-\headcommand {\slideentry {2}{5}{0}{25/29}{}{0}}
+\headcommand {\beamer@subsectionpages {25}{24}}
+\headcommand {\beamer@subsectionentry {0}{2}{4}{25}{Result: Lemma 1}}
+\headcommand {\slideentry {2}{4}{0}{25/29}{}{0}}
 \headcommand {\beamer@framepages {25}{29}}
-\headcommand {\slideentry {2}{5}{0}{25/30}{}{0}}
+\headcommand {\slideentry {2}{4}{0}{25/30}{}{0}}
 \headcommand {\beamer@framepages {25}{30}}
-\headcommand {\slideentry {2}{5}{1}{31/31}{}{0}}
-\headcommand {\beamer@framepages {31}{31}}
-\headcommand {\slideentry {2}{5}{2}{33/33}{}{0}}
-\headcommand {\beamer@framepages {33}{33}}
-\headcommand {\beamer@sectionpages {12}{33}}
-\headcommand {\beamer@subsectionpages {12}{33}}
-\headcommand {\sectionentry {3}{Experiments and results}{34}{Experiments and results}{0}}
-\headcommand {\slideentry {3}{0}{1}{34/34}{}{0}}
-\headcommand {\beamer@framepages {34}{34}}
-\headcommand {\slideentry {3}{0}{2}{35/35}{}{0}}
-\headcommand {\beamer@framepages {35}{35}}
-\headcommand {\slideentry {3}{0}{3}{36/36}{}{0}}
-\headcommand {\beamer@framepages {36}{36}}
-\headcommand {\beamer@sectionpages {34}{37}}
-\headcommand {\beamer@subsectionpages {34}{37}}
-\headcommand {\sectionentry {4}{Conclusion}{38}{Conclusion}{0}}
-\headcommand {\slideentry {4}{0}{1}{38/38}{}{0}}
+\headcommand {\slideentry {2}{4}{0}{25/31}{}{0}}
+\headcommand {\beamer@framepages {25}{31}}
+\headcommand {\beamer@subsectionpages {12}{31}}
+\headcommand {\beamer@subsectionentry {0}{2}{5}{32}{The Problem with Naive Estimation}}
+\headcommand {\slideentry {2}{8}{0}{32/32}{}{0}}
+\headcommand {\beamer@framepages {32}{32}}
+\headcommand {\beamer@subsectionpages {32}{31}}
+\headcommand {\beamer@subsectionentry {0}{2}{6}{32}{Key Insight: Path-wise Reparameterization}}
+\headcommand {\slideentry {2}{8}{0}{32/33}{}{0}}
+\headcommand {\beamer@framepages {32}{33}}
+\headcommand {\beamer@subsectionpages {32}{31}}
+\headcommand {\beamer@subsectionentry {0}{2}{7}{32}{Introducing the Reparameterization Matrix $M_t(s)$}}
+\headcommand {\slideentry {2}{8}{0}{32/34}{}{0}}
+\headcommand {\beamer@framepages {32}{34}}
+\headcommand {\beamer@subsectionpages {32}{31}}
+\headcommand {\beamer@subsectionentry {0}{2}{8}{32}{Result: The Matching Vector Field $w$}}
+\headcommand {\slideentry {2}{8}{0}{32/35}{}{0}}
+\headcommand {\beamer@framepages {32}{35}}
+\headcommand {\slideentry {2}{8}{0}{32/36}{}{0}}
+\headcommand {\beamer@framepages {32}{36}}
+\headcommand {\slideentry {2}{8}{0}{32/37}{}{0}}
+\headcommand {\beamer@framepages {32}{37}}
+\headcommand {\beamer@subsectionpages {12}{37}}
+\headcommand {\beamer@subsectionentry {0}{2}{9}{38}{The Challenge: Measure Mismatch}}
+\headcommand {\slideentry {2}{12}{0}{38/38}{}{0}}
 \headcommand {\beamer@framepages {38}{38}}
-\headcommand {\slideentry {4}{0}{2}{40/40}{}{0}}
-\headcommand {\beamer@framepages {40}{40}}
-\headcommand {\beamer@partpages {1}{40}}
-\headcommand {\beamer@subsectionpages {38}{40}}
-\headcommand {\beamer@sectionpages {38}{40}}
-\headcommand {\beamer@documentpages {40}}
-\headcommand {\gdef \inserttotalframenumber {28}}
+\headcommand {\beamer@subsectionpages {38}{37}}
+\headcommand {\beamer@subsectionentry {0}{2}{10}{38}{Girsanov Theorem to the Rescue}}
+\headcommand {\slideentry {2}{12}{0}{38/39}{}{0}}
+\headcommand {\beamer@framepages {38}{39}}
+\headcommand {\slideentry {2}{12}{0}{38/40}{}{0}}
+\headcommand {\beamer@framepages {38}{40}}
+\headcommand {\beamer@subsectionpages {38}{37}}
+\headcommand {\beamer@subsectionentry {0}{2}{11}{38}{Brownian Motion Shift}}
+\headcommand {\slideentry {2}{12}{0}{38/41}{}{0}}
+\headcommand {\beamer@framepages {38}{41}}
+\headcommand {\beamer@subsectionpages {38}{37}}
+\headcommand {\beamer@subsectionentry {0}{2}{12}{38}{Final Result: Complete Matching Vector Field}}
+\headcommand {\slideentry {2}{12}{0}{38/42}{}{0}}
+\headcommand {\beamer@framepages {38}{42}}
+\headcommand {\slideentry {2}{12}{0}{38/43}{}{0}}
+\headcommand {\beamer@framepages {38}{43}}
+\headcommand {\slideentry {2}{12}{1}{44/44}{}{0}}
+\headcommand {\beamer@framepages {44}{44}}
+\headcommand {\slideentry {2}{14}{0}{46/46}{}{0}}
+\headcommand {\beamer@framepages {46}{46}}
+\headcommand {\beamer@subsectionpages {12}{45}}
+\headcommand {\beamer@subsectionentry {0}{2}{13}{46}{Connection to Cross-Entropy (CE) Loss}}
+\headcommand {\beamer@subsectionpages {46}{45}}
+\headcommand {\beamer@subsectionentry {0}{2}{14}{46}{Role of Reparameterization Matrix $M_t$}}
+\headcommand {\slideentry {2}{14}{0}{46/47}{}{0}}
+\headcommand {\beamer@framepages {46}{47}}
+\headcommand {\slideentry {2}{14}{0}{46/48}{}{0}}
+\headcommand {\beamer@framepages {46}{48}}
+\headcommand {\slideentry {2}{14}{0}{46/49}{}{0}}
+\headcommand {\beamer@framepages {46}{49}}
+\headcommand {\slideentry {2}{14}{1}{50/50}{}{0}}
+\headcommand {\beamer@framepages {50}{50}}
+\headcommand {\beamer@sectionpages {12}{50}}
+\headcommand {\beamer@subsectionpages {12}{50}}
+\headcommand {\sectionentry {3}{Experiments and results}{51}{Experiments and results}{0}}
+\headcommand {\slideentry {3}{0}{1}{51/51}{}{0}}
+\headcommand {\beamer@framepages {51}{51}}
+\headcommand {\slideentry {3}{0}{1}{51/52}{}{0}}
+\headcommand {\beamer@framepages {51}{52}}
+\headcommand {\slideentry {3}{0}{1}{51/53}{}{0}}
+\headcommand {\beamer@framepages {51}{53}}
+\headcommand {\slideentry {3}{0}{2}{54/54}{}{0}}
+\headcommand {\beamer@framepages {54}{54}}
+\headcommand {\slideentry {3}{0}{3}{55/55}{}{0}}
+\headcommand {\beamer@framepages {55}{55}}
+\headcommand {\beamer@sectionpages {51}{56}}
+\headcommand {\beamer@subsectionpages {51}{56}}
+\headcommand {\sectionentry {4}{Conclusion}{57}{Conclusion}{0}}
+\headcommand {\slideentry {4}{0}{1}{57/57}{}{0}}
+\headcommand {\beamer@framepages {57}{57}}
+\headcommand {\slideentry {4}{0}{2}{59/59}{}{0}}
+\headcommand {\beamer@framepages {59}{59}}
+\headcommand {\beamer@partpages {1}{59}}
+\headcommand {\beamer@subsectionpages {57}{59}}
+\headcommand {\beamer@sectionpages {57}{59}}
+\headcommand {\beamer@documentpages {59}}
+\headcommand {\gdef \inserttotalframenumber {47}}
