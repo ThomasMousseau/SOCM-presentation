@@ -627,7 +627,7 @@
 
 
 
-\begin{frame}{Matching Vector Field (1/3)}
+\begin{frame}{Matching Vector Field (1/2)}
     \vspace{-0.3cm}
     
     \begin{block}{Reparameterization Function $w(t, v, X^v, B, M_t)$}
@@ -651,13 +651,110 @@
 
 \end{frame}
 
-\begin{frame}[allowframebreaks]{SOCM Mathematical Framework - Complete Reference}
+\begin{frame}[allowframebreaks]{Matching Vector Field (2/2) - Derivation Steps}
+    \vspace{-0.3cm}
+    
+    % Make section titles more prominent
+    \begin{center}
+        \Large\textcolor{blue}{\textbf{Step 1 — Path-integral form of $u^*$ (Kappen 2005)}}
+    \end{center}
+    
+    \vspace{0.3cm}
+    
+    \begin{block}{What to Show}
+        We want to eliminate the value function $V$ from the optimal control formula and express $u^*$ directly in terms of path integrals.
+    \end{block}
+    
+    \vspace{0.5cm}
+    
+    \subsection*{Starting Point: Value Function Definition}
+    
+    The value function is defined as the infimum over all controls:
+    $$V(x,t) = \inf_u J(u; x,t) = \inf_u \mathbb{E}\left[\int_t^T \left(\frac{1}{2}\|u\|^2 + f\right) ds + g(X_T) \,\middle|\, X_t = x\right]$$
+    
+    \vspace{0.5cm}
+    
+    \subsection*{Infinitesimal Generator and HJB Equation}
+    
+    The \textcolor{blue}{\textbf{infinitesimal generator}} $L$ of the uncontrolled diffusion $dX_t = b \, dt + \sqrt{\lambda} \sigma \, dB_t$ is:
+    $$L = b \cdot \nabla + \frac{\lambda}{2} \text{tr}(\sigma \sigma^T \nabla^2)$$
+    
+    The Hamilton-Jacobi-Bellman equation becomes:
+    $$\frac{\partial V}{\partial t} + LV + \inf_u \left[\frac{1}{2}\|u\|^2 + f + u^T \sigma^T \nabla V\right] = 0$$
+    
+    \vspace{0.5cm}
+    
+    \subsection*{Deriving the Optimal Control}
+    
+    To find the infimum, we differentiate the expression inside the brackets with respect to $u$:
+    $$\frac{\partial}{\partial u}\left[\frac{1}{2}\|u\|^2 + u^T \sigma^T \nabla V\right] = u + \sigma^T \nabla V = 0$$
+    
+    This gives us the \textcolor{red}{\textbf{optimal control}}:
+    $$u^*(x,t) = -\sigma^T(t)\nabla V(x,t)$$
+    
+    Substituting back into the HJB equation:
+    $$\frac{\partial V}{\partial t} + LV - \frac{1}{2}\|\sigma^T \nabla V\|^2 + f = 0, \quad V(x,T) = g(x)$$
+    
+    \vspace{0.8cm}
+    
+    \subsection*{Key Insight: Path-integral Value Function}
+    
+    For the \textcolor{blue}{\textbf{uncontrolled SDE}} $dX_t = b \, dt + \sqrt{\lambda} \sigma \, dB_t$, the value function has a path-integral representation:
+    
+    $$V(x,t) = -\lambda \log \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+    
+    \vspace{0.8cm}
+    
+    \subsection*{Result: Lemma 1}
+    
+    Combining the optimal control formula with the path-integral representation:
+    
+    \begin{alertblock}{Path-integral Optimal Control}
+        $$u^*(x,t) = \lambda \, \sigma^T(t) \, \nabla_x \log \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+    \end{alertblock}
+    
+    \vspace{0.8cm}
+    
+    \begin{block}{Why This Matters}
+        \textbf{Key Achievement:} This eliminates $V$ from the formula for $u^*$ and reframes \textcolor{ForestGreen}{\textbf{"learning a control"}} as \textcolor{blue}{\textbf{learning a score}} (a gradient of a log-partition function over paths).
+        
+        \vspace{0.3cm}
+        
+        This is exactly the kind of signal we can estimate and match via \textcolor{red}{\textbf{least squares}} — setting up the foundation for SOCM's approach.
+    \end{block}
+    
+    \framebreak
+    
+    % Step 2 on next frame break
+    \begin{center}
+        \Large\textcolor{red}{\textbf{Step 2 — Path-wise Reparameterization Trick}}
+    \end{center}
+    
+    \vspace{0.3cm}
+    
+    \begin{block}{The Challenge}
+        Direct estimation of the path-integral in Step 1 has high variance and is computationally intractable for complex problems.
+    \end{block}
+    
+    % Add Step 2 content here...
+    
+    \framebreak
+    
+    % Step 3 on next frame break
+    \begin{center}
+        \Large\textcolor{ForestGreen}{\textbf{Step 3 — Girsanov Theorem Application}}
+    \end{center}
+    
+    \vspace{0.3cm}
+    
+    \begin{block}{The Goal}
+        Transform the uncontrolled process into a controlled process using measure theory.
+    \end{block}
+    
+    % Add Step 3 content here...
 
 \end{frame}
 
-\begin{frame}{Matching Vector Field (2/3)}
-
-\end{frame}
     
 \begin{frame}{Importance Weight (1/2)}
     
