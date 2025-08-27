@@ -56,84 +56,76 @@
 \headcommand {\beamer@framepages {25}{30}}
 \headcommand {\slideentry {2}{4}{0}{25/31}{}{0}}
 \headcommand {\beamer@framepages {25}{31}}
-\headcommand {\beamer@subsectionpages {12}{31}}
-\headcommand {\beamer@subsectionentry {0}{2}{5}{32}{The Problem with Naive Estimation}}
-\headcommand {\slideentry {2}{8}{0}{32/32}{}{0}}
+\headcommand {\slideentry {2}{6}{0}{32/32}{}{0}}
 \headcommand {\beamer@framepages {32}{32}}
-\headcommand {\beamer@subsectionpages {32}{31}}
-\headcommand {\beamer@subsectionentry {0}{2}{6}{32}{Key Insight: Path-wise Reparameterization}}
-\headcommand {\slideentry {2}{8}{0}{32/33}{}{0}}
+\headcommand {\beamer@subsectionpages {12}{31}}
+\headcommand {\beamer@subsectionentry {0}{2}{5}{32}{Expanding the Square}}
+\headcommand {\slideentry {2}{6}{0}{32/33}{}{0}}
 \headcommand {\beamer@framepages {32}{33}}
-\headcommand {\beamer@subsectionpages {32}{31}}
-\headcommand {\beamer@subsectionentry {0}{2}{7}{32}{Introducing the Reparameterization Matrix $M_t(s)$}}
-\headcommand {\slideentry {2}{8}{0}{32/34}{}{0}}
+\headcommand {\slideentry {2}{6}{0}{32/34}{}{0}}
 \headcommand {\beamer@framepages {32}{34}}
 \headcommand {\beamer@subsectionpages {32}{31}}
-\headcommand {\beamer@subsectionentry {0}{2}{8}{32}{Result: The Matching Vector Field $w$}}
-\headcommand {\slideentry {2}{8}{0}{32/35}{}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{6}{32}{Transforming the Cross Term}}
+\headcommand {\slideentry {2}{6}{0}{32/35}{}{0}}
 \headcommand {\beamer@framepages {32}{35}}
-\headcommand {\slideentry {2}{8}{0}{32/36}{}{0}}
+\headcommand {\slideentry {2}{6}{0}{32/36}{}{0}}
 \headcommand {\beamer@framepages {32}{36}}
-\headcommand {\slideentry {2}{8}{0}{32/37}{}{0}}
-\headcommand {\beamer@framepages {32}{37}}
-\headcommand {\beamer@subsectionpages {12}{37}}
-\headcommand {\beamer@subsectionentry {0}{2}{9}{38}{The Challenge: Measure Mismatch}}
-\headcommand {\slideentry {2}{12}{0}{38/38}{}{0}}
-\headcommand {\beamer@framepages {38}{38}}
-\headcommand {\beamer@subsectionpages {38}{37}}
-\headcommand {\beamer@subsectionentry {0}{2}{10}{38}{Girsanov Theorem to the Rescue}}
-\headcommand {\slideentry {2}{12}{0}{38/39}{}{0}}
-\headcommand {\beamer@framepages {38}{39}}
-\headcommand {\slideentry {2}{12}{0}{38/40}{}{0}}
-\headcommand {\beamer@framepages {38}{40}}
-\headcommand {\beamer@subsectionpages {38}{37}}
-\headcommand {\beamer@subsectionentry {0}{2}{11}{38}{Brownian Motion Shift}}
-\headcommand {\slideentry {2}{12}{0}{38/41}{}{0}}
-\headcommand {\beamer@framepages {38}{41}}
-\headcommand {\beamer@subsectionpages {38}{37}}
-\headcommand {\beamer@subsectionentry {0}{2}{12}{38}{Final Result: Complete Matching Vector Field}}
-\headcommand {\slideentry {2}{12}{0}{38/42}{}{0}}
-\headcommand {\beamer@framepages {38}{42}}
-\headcommand {\slideentry {2}{12}{0}{38/43}{}{0}}
-\headcommand {\beamer@framepages {38}{43}}
-\headcommand {\slideentry {2}{12}{1}{44/44}{}{0}}
-\headcommand {\beamer@framepages {44}{44}}
-\headcommand {\slideentry {2}{14}{0}{46/46}{}{0}}
-\headcommand {\beamer@framepages {46}{46}}
-\headcommand {\beamer@subsectionpages {12}{45}}
-\headcommand {\beamer@subsectionentry {0}{2}{13}{46}{Connection to Cross-Entropy (CE) Loss}}
-\headcommand {\beamer@subsectionpages {46}{45}}
-\headcommand {\beamer@subsectionentry {0}{2}{14}{46}{Role of Reparameterization Matrix $M_t$}}
-\headcommand {\slideentry {2}{14}{0}{46/47}{}{0}}
-\headcommand {\beamer@framepages {46}{47}}
-\headcommand {\slideentry {2}{14}{0}{46/48}{}{0}}
-\headcommand {\beamer@framepages {46}{48}}
-\headcommand {\slideentry {2}{14}{0}{46/49}{}{0}}
-\headcommand {\beamer@framepages {46}{49}}
-\headcommand {\slideentry {2}{14}{1}{50/50}{}{0}}
+\headcommand {\beamer@subsectionpages {12}{36}}
+\headcommand {\beamer@subsectionentry {0}{2}{7}{37}{The Challenge: Measure Mismatch}}
+\headcommand {\slideentry {2}{10}{0}{37/37}{}{0}}
+\headcommand {\beamer@framepages {37}{37}}
+\headcommand {\beamer@subsectionpages {37}{36}}
+\headcommand {\beamer@subsectionentry {0}{2}{8}{37}{Girsanov Theorem to the Rescue}}
+\headcommand {\slideentry {2}{10}{0}{37/38}{}{0}}
+\headcommand {\beamer@framepages {37}{38}}
+\headcommand {\slideentry {2}{10}{0}{37/39}{}{0}}
+\headcommand {\beamer@framepages {37}{39}}
+\headcommand {\beamer@subsectionpages {37}{36}}
+\headcommand {\beamer@subsectionentry {0}{2}{9}{37}{Brownian Motion Shift}}
+\headcommand {\slideentry {2}{10}{0}{37/40}{}{0}}
+\headcommand {\beamer@framepages {37}{40}}
+\headcommand {\beamer@subsectionpages {37}{36}}
+\headcommand {\beamer@subsectionentry {0}{2}{10}{37}{Final Result: Complete Matching Vector Field}}
+\headcommand {\slideentry {2}{10}{0}{37/41}{}{0}}
+\headcommand {\beamer@framepages {37}{41}}
+\headcommand {\slideentry {2}{10}{0}{37/42}{}{0}}
+\headcommand {\beamer@framepages {37}{42}}
+\headcommand {\slideentry {2}{10}{1}{43/43}{}{0}}
+\headcommand {\beamer@framepages {43}{43}}
+\headcommand {\slideentry {2}{12}{0}{45/45}{}{0}}
+\headcommand {\beamer@framepages {45}{45}}
+\headcommand {\beamer@subsectionpages {12}{44}}
+\headcommand {\beamer@subsectionentry {0}{2}{11}{45}{Connection to Cross-Entropy (CE) Loss}}
+\headcommand {\beamer@subsectionpages {45}{44}}
+\headcommand {\beamer@subsectionentry {0}{2}{12}{45}{Role of Reparameterization Matrix $M_t$}}
+\headcommand {\slideentry {2}{12}{0}{45/46}{}{0}}
+\headcommand {\beamer@framepages {45}{46}}
+\headcommand {\slideentry {2}{12}{0}{45/47}{}{0}}
+\headcommand {\beamer@framepages {45}{47}}
+\headcommand {\slideentry {2}{12}{0}{45/48}{}{0}}
+\headcommand {\beamer@framepages {45}{48}}
+\headcommand {\slideentry {2}{12}{1}{49/49}{}{0}}
+\headcommand {\beamer@framepages {49}{49}}
+\headcommand {\beamer@sectionpages {12}{49}}
+\headcommand {\beamer@subsectionpages {12}{49}}
+\headcommand {\sectionentry {3}{Experiments and results}{50}{Experiments and results}{0}}
+\headcommand {\slideentry {3}{0}{1}{50/50}{}{0}}
 \headcommand {\beamer@framepages {50}{50}}
-\headcommand {\beamer@sectionpages {12}{50}}
-\headcommand {\beamer@subsectionpages {12}{50}}
-\headcommand {\sectionentry {3}{Experiments and results}{51}{Experiments and results}{0}}
-\headcommand {\slideentry {3}{0}{1}{51/51}{}{0}}
-\headcommand {\beamer@framepages {51}{51}}
-\headcommand {\slideentry {3}{0}{1}{51/52}{}{0}}
-\headcommand {\beamer@framepages {51}{52}}
-\headcommand {\slideentry {3}{0}{1}{51/53}{}{0}}
-\headcommand {\beamer@framepages {51}{53}}
-\headcommand {\slideentry {3}{0}{2}{54/54}{}{0}}
+\headcommand {\slideentry {3}{0}{1}{50/51}{}{0}}
+\headcommand {\beamer@framepages {50}{51}}
+\headcommand {\slideentry {3}{0}{1}{50/52}{}{0}}
+\headcommand {\beamer@framepages {50}{52}}
+\headcommand {\slideentry {3}{0}{2}{53/53}{}{0}}
+\headcommand {\beamer@framepages {53}{53}}
+\headcommand {\slideentry {3}{0}{3}{54/54}{}{0}}
 \headcommand {\beamer@framepages {54}{54}}
-\headcommand {\slideentry {3}{0}{3}{55/55}{}{0}}
-\headcommand {\beamer@framepages {55}{55}}
-\headcommand {\beamer@sectionpages {51}{56}}
-\headcommand {\beamer@subsectionpages {51}{56}}
-\headcommand {\sectionentry {4}{Conclusion}{57}{Conclusion}{0}}
-\headcommand {\slideentry {4}{0}{1}{57/57}{}{0}}
-\headcommand {\beamer@framepages {57}{57}}
-\headcommand {\slideentry {4}{0}{2}{59/59}{}{0}}
-\headcommand {\beamer@framepages {59}{59}}
-\headcommand {\beamer@partpages {1}{59}}
-\headcommand {\beamer@subsectionpages {57}{59}}
-\headcommand {\beamer@sectionpages {57}{59}}
-\headcommand {\beamer@documentpages {59}}
-\headcommand {\gdef \inserttotalframenumber {47}}
+\headcommand {\beamer@sectionpages {50}{55}}
+\headcommand {\beamer@subsectionpages {50}{55}}
+\headcommand {\sectionentry {4}{Conclusion}{56}{Conclusion}{0}}
+\headcommand {\slideentry {4}{0}{1}{56/56}{}{0}}
+\headcommand {\beamer@framepages {56}{56}}
+\headcommand {\beamer@partpages {1}{57}}
+\headcommand {\beamer@subsectionpages {56}{57}}
+\headcommand {\beamer@sectionpages {56}{57}}
+\headcommand {\beamer@documentpages {57}}
+\headcommand {\gdef \inserttotalframenumber {45}}

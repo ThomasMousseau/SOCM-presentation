@@ -229,96 +229,6 @@
     }
 \end{frame}
 
-
-\begin{comment}
-\begin{frame}{Classic Approach to Finding Optimal Control}
-    \begin{block}{Optimal Control $u^*$}
-        Find the control policy $u^*$ that minimizes the expected cost: $u^* = \arg\min_u J(u)$
-    \end{block}
-        
-    \begin{block}{Hamilton-Jacobi-Bellman (HJB) Equation}
-        The classical approach uses the HJB PDE to characterize the value function $V(x,t)$:
-        \small
-        \begin{equation}
-        \frac{\partial V}{\partial t} + \min_u \left[ L(x,u,t) + \frac{\partial V}{\partial x} f(x,u,t) + \frac{1}{2}\text{tr}(\sigma^T \nabla^2 V \sigma) \right] = 0
-        \end{equation}
-        
-        \vspace{0.2cm}
-        With boundary condition: $V(x,T) = \Phi(x)$ (terminal cost)
-    \end{block}
-        
-    \begin{alertblock}{The Curse of Dimensionality}
-        Classical numerical methods (finite differences, grid-based) become \textcolor{red}{computationally intractable} in high dimensions due to exponential growth in grid size: $\mathcal{O}(N^d)$ where $d$ is dimension.
-    \end{alertblock}
-
-    \note{
-    \textcolor{blue}{\textbf{HJB Equation:}} The Hamilton-Jacobi-Bellman equation provides the theoretical foundation for solving stochastic optimal control problems by characterizing the value function $V(x,t)$ as the solution to a nonlinear PDE. The optimal control is then $u^*(x,t) = \arg\min_u [\cdots]$ from the HJB equation.
-    }
-\end{frame}
-\end{comment}
-
-\begin{comment}
-\begin{frame}{Neural PDE Solvers for SOC}
-    
-    \begin{block}{Core Innovation: Neural ODEs (Chen et al., 2018)}
-        \textcolor{blue}{\textbf{Key Insight:}} Replace discrete layers with continuous-time ODEs \\
-        $\frac{dh(t)}{dt} = f_\theta(h(t), t)$ where $h(t)$ represents hidden states evolving continuously
-    \end{block}
-
-    \vspace{-0.3cm}
-
-    \begin{columns}[t]
-        \column{0.48\textwidth}
-        \begin{alertblock}{Neural Network Approximation}
-            \small
-            \textbf{Value Function:}
-            \begin{equation}
-            V(x,t) \approx V_\theta(x,t)
-            \end{equation}
-            
-            \textbf{Control Policy:}
-            \begin{equation}
-            u(x,t) \approx u_\phi(x,t)
-            \end{equation}
-            
-            Both parameterized by deep neural networks
-        \end{alertblock}
-        
-        \column{0.48\textwidth}
-        \begin{block}{Training Process}
-            \small
-            \textbf{Physics-Informed Loss:}
-            \begin{equation}
-            \mathcal{L} = \|HJB_{residual}\|^2 + \|BC_{error}\|^2
-            \end{equation}
-            
-            \textbf{Key Components:}
-            \begin{itemize}
-                \item \textcolor{blue}{Automatic differentiation} for PDE terms
-                \item \textcolor{ForestGreen}{Adjoint method} for gradients
-                \item \textcolor{orange}{Stochastic sampling} of $(x,t)$ points
-            \end{itemize}
-        \end{block}
-    \end{columns}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{Advantages Over Classical Methods}
-        \begin{itemize}
-            \item \textcolor{ForestGreen}{\textbf{High-dimensional scalability:}} No curse of dimensionality
-            \item \textcolor{ForestGreen}{\textbf{Mesh-free:}} No spatial discretization required  
-            \item \textcolor{orange}{\textbf{Limitation:}} Requires careful tuning and may lack convergence guarantees
-        \end{itemize}
-    \end{block}
-
-    \note{
-    \textcolor{blue}{\textbf{Neural ODEs:}} Chen et al. (2018) showed that residual networks can be interpreted as discretizations of ODEs. This insight led to continuous-depth models and, crucially for our context, neural methods for solving differential equations. \\
-    \vspace{0.1cm}
-    \textcolor{ForestGreen}{\textbf{Physics-Informed Neural Networks:}} The key is training networks to satisfy the HJB equation through the residual loss, making the physics constraints part of the optimization objective.
-    }
-\end{frame}
-\end{comment}
-
 %------------------------------------------------
 \section{Stochastic Optimal Control Matching}
 
@@ -493,42 +403,6 @@
     }
 \end{frame}
 
-\begin{comment}
-\begin{frame}{Reasons behind SOCM (2/2)}
-    Current SOC methods suffer from optimization challenges that limit their effectiveness.
-    
-    \vspace{0.3cm}
-    
-    \begin{columns}[t]
-        \column{0.48\textwidth}
-        \begin{alertblock}{Current SOC Methods}
-            \begin{itemize}
-                \item Use \textbf{adjoint methods} (like CNFs)
-                \item Yield \textbf{non-convex} function landscapes
-                \item Difficult optimization with local minima
-                \item Unstable training dynamics
-            \end{itemize}
-        \end{alertblock}
-        
-        \column{0.48\textwidth}
-        \begin{block}{Diffusion Models Success}
-            \begin{itemize}
-                \item Use \textbf{least-squares loss}
-                \item Create \textbf{convex} functional landscapes
-                \item Stable and reliable optimization
-                \item Excellent empirical performance
-            \end{itemize}
-        \end{block}
-    \end{columns}
-    
-    \vspace{0.4cm}
-    
-    \begin{block}{SOCM's Innovation}
-        \textbf{Goal:} Develop least-squares loss formulations for SOC problems, combining the expressiveness of stochastic control with the optimization stability of diffusion models.
-    \end{block}
-\end{frame}
-\end{comment}
-
 
 \begin{frame}{SOCM in Context: Optimization Landscapes}
     \vspace{0.5cm}
@@ -544,32 +418,6 @@
         \end{tabular}
     \end{table}
 \end{frame}
-
-\begin{comment}
-\begin{frame}{Introducing Stochastic Optimal Control Matching}
-    SOCM offers a more principled, stable, and accurate way to learn generative dynamics by blending stochastic control theory with modern matching-based generative modeling.
-    
-    \vspace{0.4cm}
-    
-    \begin{block}{Key Novel Contributions}
-        \begin{enumerate}
-            \item \textbf{Controlled Stochastic Process:} Views the generation process as a controlled stochastic process bridging a simple distribution to data.
-            
-            \vspace{0.2cm}
-            
-            \item \textbf{Least-Squares Matching:} Learning the control via least-squares matching, a stable and convex regression objective.
-            
-            \vspace{0.2cm}
-            
-            \item \textbf{Joint Optimization:} Optimizing control and variance-reducing reparameterization matrices simultaneously, for efficient learning.
-            
-            \vspace{0.2cm}
-            
-            \item \textbf{Path-wise Reparameterization:} Introducing a path-wise reparameterization trick, boosting gradient estimation quality.
-        \end{enumerate}
-    \end{block}
-\end{frame}
-\end{comment}
 
 \begin{frame}{SOCM Framework: From Classical SOC to SOCM}
     \small
@@ -724,7 +572,7 @@
     $$Z(x,t) = \mathbb{E}_0\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
     
     Then the optimal control becomes:
-    
+
     \begin{alertblock}{Path-integral Optimal Control}
         $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log Z(x,t)$$
         $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log \mathbb{E}_0\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
@@ -732,8 +580,8 @@
         \footnotesize{$\nabla_x$ is the gradient w.r.t. the initial condition $X_t = x$, not a terminal-state score.}
     \end{alertblock}
     
-    \vspace{0.8cm}
-    
+    \vspace{-0.3cm}
+
     \begin{block}{Why This Matters}
         \textbf{Key Achievement:} We eliminate $V$ to avoid solving a nonlinear PDE and reframe the control as a \textcolor{blue}{\textbf{score function}} $\nabla_x \log Z(x,t)$.
         
@@ -745,110 +593,87 @@
     \framebreak
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Matching Vector Field (2/3) - Reparam}
+\begin{frame}[allowframebreaks]{Matching Vector Field (2/3) — Optimal Control}
 
     \begin{center}
-        \Large\textcolor{red}{\textbf{Step 2 — Path-wise Reparameterization Trick}}
+    \Large\textcolor{red}{\textbf{Step 2 — Rendering $u^*$ Trackable using Pathwise reparameterization (under the \emph{uncontrolled} law)}}
     \end{center}
-    
-    \vspace{0.3cm}
-    
-    \begin{block}{The Challenge}
-        Direct estimation of the path-integral in Step 1 has high variance and is computationally intractable for complex problems.
+
+    \begin{block}{The Hypothetical Scenario}
+        \textbf{What if} we could compute the optimal control $u^*(X_t, t)$ during training? We would simply minimize the $L_2$ distance between our learned control $u$ and the true optimum $u^*$.
     \end{block}
     
     \vspace{0.5cm}
     
-    \subsection*{The Problem with Naive Estimation}
-    
-    From Step 1, we need to estimate:
-    $$u^*(x,t) = \lambda \sigma^T(t) \nabla_x \log Z(x,t)$$
-    
-    where $Z(x,t) = \mathbb{E}_0[\exp(-\frac{1}{\lambda}\int_t^T f + \frac{1}{\lambda}g) | X_t = x]$
-    
-    \textbf{Direct approach:} Estimate $\nabla_x \log Z(x,t)$ by:
-    \begin{itemize}
-        \item Sample paths from uncontrolled SDE
-        \item Compute finite differences for gradients
-        \item \textcolor{red}{\textbf{High variance}} due to exponential weights
-        \item \textcolor{red}{\textbf{Biased}} finite difference approximations
-    \end{itemize}
-    
-    \vspace{0.8cm}
-    
-    \subsection*{Key Insight: Path-wise Reparameterization}
-    
-    Instead of estimating gradients of expectations, we use the \textcolor{blue}{\textbf{path-wise gradient identity}}:
-    
-    $$\nabla_x \mathbb{E}[h(X)] = \mathbb{E}[\nabla_x h(X) + h(X) \cdot \nabla_x \log p(X)]$$
-    
-    where $p(X)$ is the path measure density.
-    
-    \vspace{0.5cm}
-    
-    \textbf{This allows us to:}
-    \begin{itemize}
-        \item Move the gradient \textcolor{ForestGreen}{\textbf{inside}} the expectation
-        \item Compute exact gradients along sample paths
-        \item Avoid finite difference approximations
-        \item Reduce variance significantly
-    \end{itemize}
-    
-    \vspace{0.8cm}
-    
-    \subsection*{Introducing the Reparameterization Matrix $M_t(s)$}
-    
-    To implement path-wise reparameterization effectively, we introduce a matrix $M_t(s)$ where:
-    \begin{itemize}
-        \item $M_t : [t,T] \rightarrow \mathbb{R}^{d \times d}$ is a \textcolor{red}{\textbf{learnable matrix function}}
-        \item Acts as a "change of variables" for the gradient computation
-        \item \textcolor{blue}{\textbf{Optimized jointly}} with control $u$ to minimize variance
-        \item Enables efficient gradient flow through stochastic integrals
-    \end{itemize}
-    
-    \vspace{0.8cm}
-    
-    \subsection*{Result: The Matching Vector Field $w$}
-    
-    After applying path-wise reparameterization, we get:
-    
-    \begin{alertblock}{Path-wise Reparameterized Control}
+    \begin{alertblock}{Ideal Loss Function}
         \begin{equation}
-        \begin{aligned}
-        w(t, v, X^v, B, M_t) 
-        = \sigma(t)^\top \Bigg(
-        &\textcolor{orange}{- \int_t^T M_t(s) \nabla_x f(X_s^v, s)\, ds - M_t(T)\nabla g(X_T^v)} \\[4pt]
-        &\textcolor{blue}{+ \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^\top v(X_s^v, s)\, ds} \\[4pt]
-        &\textcolor{ForestGreen}{+ \sqrt{\lambda} \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^\top dB_s}
-        \Bigg)
-        \end{aligned}
+        \tilde{\mathcal{L}}(u) = \mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X_t,t) - u^*(X_t,t)\|^2 dt \exp\left(-\lambda^{-1}\int_0^T f(X_t,t) dt - \lambda^{-1}g(X_T)\right)\right]
         \end{equation}
     \end{alertblock}
     
-    \vspace{0.5cm}
-    
-    \textbf{Component breakdown:}
-    \begin{itemize}
-        \item \textcolor{orange}{\textbf{Cost terms:}} Direct path-wise gradients of running and terminal costs
-        \item \textcolor{blue}{\textbf{Drift correction:}} Accounts for arbitrary control $v$ and matrix dynamics
-        \item \textcolor{ForestGreen}{\textbf{Stochastic integral:}} The key innovation - exact gradient through Brownian motion
-    \end{itemize}
-    
     \vspace{0.8cm}
     
-    \begin{block}{Why This Works}
-        \textbf{Key Achievement:} We transform the high-variance score estimation problem into a \textcolor{red}{\textbf{tractable regression target}} $w$ that can be:
-        \begin{itemize}
-            \item Computed exactly along sample paths
-            \item Used as a target for least-squares matching: $\min_u \mathbb{E}[\|u(X^v_t,t) - w(\cdot)\|^2]$
-            \item Optimized jointly with $M_t$ to minimize variance
-        \end{itemize}
+    \subsection*{Expanding the Square}
+    
+    Let's expand the squared term $\|u(X_t,t) - u^*(X_t,t)\|^2$:
+    
+    \begin{equation}
+    \begin{aligned}
+    \tilde{\mathcal{L}}(u) = \mathbb{E}\Bigg[\frac{1}{T}\int_0^T \Big(
+    &\|u(X_t,t)\|^2 - 2\langle u(X_t,t), u^*(X_t,t)\rangle + \|u^*(X_t,t)\|^2\Big) dt \\[4pt]
+    &\times \exp\left(-\lambda^{-1}\int_0^T f(X_t,t) dt - \lambda^{-1}g(X_T)\right)\Bigg]
+    \end{aligned}
+    \end{equation}
         
-        This sets up Step 3: using Girsanov theorem to handle the measure change from arbitrary control $v$ to optimal control.
+    \vspace{0.5cm}
+    
+    \begin{alertblock}{The Fundamental Challenge}
+        \textbf{We cannot compute $u^*(X_t,t)$ directly!} This is exactly why we need SOCM's matching approach - to find a computable target $w$ that serves as a proxy for $u^*$.
+    \end{alertblock}
+
+        \begin{block}{Why Focus on the Cross Term?}
+        We concentrate on transforming the cross term $\langle u(X_t,t), u^*(X_t,t)\rangle$ because:
+        
+        \vspace{0.3cm}
+        
+        \textbf{First term $\|u(X_t,t)\|^2$:} Straightforward to compute - depends only on our learned control $u$
+        
+        \vspace{0.3cm}
+        
+        \textbf{Third term $\|u^*(X_t,t)\|^2$:} Constant with respect to $u$ - doesn't affect the optimization
+        
+        \vspace{0.3cm}
+        
+        \textbf{Cross term:} The \textcolor{red}{\textbf{only term}} that requires the path-integral formulation since it involves both $u$ and $u^*$
     \end{block}
-        
-    \framebreak
+
+    \vspace{0.5cm}
+    
+    \subsection*{Transforming the Cross Term}
+    
+    Using the path-integral representation from Step 1, we can transform the problematic cross term:
+    
+    \begin{equation}
+    \begin{aligned}
+    &\mathbb{E}\left[\frac{1}{T}\int_0^T \langle u(X_t,t), u^*(X_t,t)\rangle dt \exp\left(-\lambda^{-1}\int_0^T f(X_t,t) dt - \lambda^{-1}g(X_T)\right)\right] \\[8pt]
+    &= \lambda \mathbb{E}\left[\frac{1}{T}\int_0^T \left\langle u(X_t,t), \sigma(t)^T \nabla_x \mathbb{E}\left[\exp\left(-\lambda^{-1}\int_t^T f(X_s,s) ds - \lambda^{-1}g(X_T)\right) \middle| X_t = x\right]\right\rangle \right. \\[4pt]
+    &\qquad\qquad\qquad\qquad\qquad \left. \times \exp\left(-\lambda^{-1}\int_0^t f(X_s,s) ds\right) dt\right]
+    \end{aligned}
+    \end{equation}
+    
+    \vspace{0.5cm}
+    
+    \begin{alertblock}{Next Challenge}
+        The transformed cross term still contains an intractable expectation. This is where path-wise reparameterization becomes essential to make this computable since
+        Monte-Carlo “score-function” (REINFORCE) estimators for this expectation have prohibitively high variance.
+    \end{alertblock}
+
+
+    
+    
+
 \end{frame}
+
 
 \begin{frame}[allowframebreaks]{Matching Vector Field (3/3) - Girsanov Theorem}
 
@@ -1201,11 +1026,11 @@
 % \end{frame}
 
 
-\begin{frame}{References}
-    \footnotesize
-    \bibliography{reference.bib}
-    \bibliographystyle{apalike}
-\end{frame}
+% \begin{frame}{References}
+%     \footnotesize
+%     \bibliography{reference.bib}
+%     \bibliographystyle{apalike}
+% \end{frame}
 
 %------------------------------------------------
 
