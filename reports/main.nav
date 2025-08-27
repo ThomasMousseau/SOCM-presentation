@@ -71,61 +71,43 @@
 \headcommand {\slideentry {2}{6}{0}{32/36}{}{0}}
 \headcommand {\beamer@framepages {32}{36}}
 \headcommand {\beamer@subsectionpages {12}{36}}
-\headcommand {\beamer@subsectionentry {0}{2}{7}{37}{The Challenge: Measure Mismatch}}
-\headcommand {\slideentry {2}{10}{0}{37/37}{}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{7}{37}{Theoretical Foundation: General Reparameterization Theorem}}
+\headcommand {\slideentry {2}{7}{0}{37/37}{}{0}}
 \headcommand {\beamer@framepages {37}{37}}
-\headcommand {\beamer@subsectionpages {37}{36}}
-\headcommand {\beamer@subsectionentry {0}{2}{8}{37}{Girsanov Theorem to the Rescue}}
-\headcommand {\slideentry {2}{10}{0}{37/38}{}{0}}
+\headcommand {\slideentry {2}{7}{0}{37/38}{}{0}}
 \headcommand {\beamer@framepages {37}{38}}
-\headcommand {\slideentry {2}{10}{0}{37/39}{}{0}}
+\headcommand {\slideentry {2}{7}{0}{37/39}{}{0}}
 \headcommand {\beamer@framepages {37}{39}}
-\headcommand {\beamer@subsectionpages {37}{36}}
-\headcommand {\beamer@subsectionentry {0}{2}{9}{37}{Brownian Motion Shift}}
-\headcommand {\slideentry {2}{10}{0}{37/40}{}{0}}
-\headcommand {\beamer@framepages {37}{40}}
-\headcommand {\beamer@subsectionpages {37}{36}}
-\headcommand {\beamer@subsectionentry {0}{2}{10}{37}{Final Result: Complete Matching Vector Field}}
-\headcommand {\slideentry {2}{10}{0}{37/41}{}{0}}
-\headcommand {\beamer@framepages {37}{41}}
-\headcommand {\slideentry {2}{10}{0}{37/42}{}{0}}
-\headcommand {\beamer@framepages {37}{42}}
-\headcommand {\slideentry {2}{10}{1}{43/43}{}{0}}
-\headcommand {\beamer@framepages {43}{43}}
-\headcommand {\slideentry {2}{12}{0}{45/45}{}{0}}
+\headcommand {\slideentry {2}{7}{1}{40/40}{}{0}}
+\headcommand {\beamer@framepages {40}{40}}
+\headcommand {\slideentry {2}{7}{1}{40/41}{}{0}}
+\headcommand {\beamer@framepages {40}{41}}
+\headcommand {\slideentry {2}{7}{2}{42/42}{}{0}}
+\headcommand {\beamer@framepages {42}{42}}
+\headcommand {\slideentry {2}{7}{2}{42/43}{}{0}}
+\headcommand {\beamer@framepages {42}{43}}
+\headcommand {\slideentry {2}{7}{2}{42/44}{}{0}}
+\headcommand {\beamer@framepages {42}{44}}
+\headcommand {\slideentry {2}{7}{3}{45/45}{}{0}}
 \headcommand {\beamer@framepages {45}{45}}
-\headcommand {\beamer@subsectionpages {12}{44}}
-\headcommand {\beamer@subsectionentry {0}{2}{11}{45}{Connection to Cross-Entropy (CE) Loss}}
-\headcommand {\beamer@subsectionpages {45}{44}}
-\headcommand {\beamer@subsectionentry {0}{2}{12}{45}{Role of Reparameterization Matrix $M_t$}}
-\headcommand {\slideentry {2}{12}{0}{45/46}{}{0}}
-\headcommand {\beamer@framepages {45}{46}}
-\headcommand {\slideentry {2}{12}{0}{45/47}{}{0}}
-\headcommand {\beamer@framepages {45}{47}}
-\headcommand {\slideentry {2}{12}{0}{45/48}{}{0}}
-\headcommand {\beamer@framepages {45}{48}}
-\headcommand {\slideentry {2}{12}{1}{49/49}{}{0}}
+\headcommand {\beamer@sectionpages {12}{45}}
+\headcommand {\beamer@subsectionpages {12}{45}}
+\headcommand {\sectionentry {3}{Experiments and results}{46}{Experiments and results}{0}}
+\headcommand {\slideentry {3}{0}{1}{46/46}{}{0}}
+\headcommand {\beamer@framepages {46}{46}}
+\headcommand {\slideentry {3}{0}{1}{46/47}{}{0}}
+\headcommand {\beamer@framepages {46}{47}}
+\headcommand {\slideentry {3}{0}{2}{48/48}{}{0}}
+\headcommand {\beamer@framepages {48}{48}}
+\headcommand {\slideentry {3}{0}{3}{49/49}{}{0}}
 \headcommand {\beamer@framepages {49}{49}}
-\headcommand {\beamer@sectionpages {12}{49}}
-\headcommand {\beamer@subsectionpages {12}{49}}
-\headcommand {\sectionentry {3}{Experiments and results}{50}{Experiments and results}{0}}
-\headcommand {\slideentry {3}{0}{1}{50/50}{}{0}}
-\headcommand {\beamer@framepages {50}{50}}
-\headcommand {\slideentry {3}{0}{1}{50/51}{}{0}}
-\headcommand {\beamer@framepages {50}{51}}
-\headcommand {\slideentry {3}{0}{1}{50/52}{}{0}}
-\headcommand {\beamer@framepages {50}{52}}
-\headcommand {\slideentry {3}{0}{2}{53/53}{}{0}}
-\headcommand {\beamer@framepages {53}{53}}
-\headcommand {\slideentry {3}{0}{3}{54/54}{}{0}}
-\headcommand {\beamer@framepages {54}{54}}
-\headcommand {\beamer@sectionpages {50}{55}}
-\headcommand {\beamer@subsectionpages {50}{55}}
-\headcommand {\sectionentry {4}{Conclusion}{56}{Conclusion}{0}}
-\headcommand {\slideentry {4}{0}{1}{56/56}{}{0}}
-\headcommand {\beamer@framepages {56}{56}}
-\headcommand {\beamer@partpages {1}{57}}
-\headcommand {\beamer@subsectionpages {56}{57}}
-\headcommand {\beamer@sectionpages {56}{57}}
-\headcommand {\beamer@documentpages {57}}
-\headcommand {\gdef \inserttotalframenumber {45}}
+\headcommand {\beamer@sectionpages {46}{50}}
+\headcommand {\beamer@subsectionpages {46}{50}}
+\headcommand {\sectionentry {4}{Conclusion}{51}{Conclusion}{0}}
+\headcommand {\slideentry {4}{0}{1}{51/51}{}{0}}
+\headcommand {\beamer@framepages {51}{51}}
+\headcommand {\beamer@partpages {1}{52}}
+\headcommand {\beamer@subsectionpages {51}{52}}
+\headcommand {\beamer@sectionpages {51}{52}}
+\headcommand {\beamer@documentpages {52}}
+\headcommand {\gdef \inserttotalframenumber {41}}

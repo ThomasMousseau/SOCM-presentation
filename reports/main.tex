@@ -668,113 +668,132 @@
         Monte-Carlo “score-function” (REINFORCE) estimators for this expectation have prohibitively high variance.
     \end{alertblock}
 
-
+    \begin{block}{The Challenge: Intractable Conditional Expectation}
+        From Step 2, we need to make this computable for training:
+        $$\nabla_x \mathbb{E}\left[\exp\left(-\lambda^{-1}\int_t^T f(X_s,s)ds - \lambda^{-1}g(X_T)\right) \bigg| X_t = x\right]$$
+        
+        \textbf{Standard approach:} Monte-Carlo score estimators → \textcolor{red}{\textbf{prohibitively high variance}}
+    \end{block}
     
-    
+    \vspace{0.5cm}
 
 \end{frame}
 
+\begin{frame}[allowframebreaks]{Matching Vector Field (2/3) — Optimal Control (continued)}
+    
+    \subsection*{Theoretical Foundation: General Reparameterization Theorem}
+    
+    This transformation comes from a general theorem for Fréchet-differentiable functionals $F(X)$:
+    
+    \begin{alertblock}{Proposition 4: Path-wise Reparameterization}
+        \begin{equation}
+        \begin{aligned}
+        \nabla_x \mathbb{E}[\exp(-F(X)) | X_0 = x] = \mathbb{E}\Bigg[
+        &\left(-\nabla_z F(X + \psi)\big|_{z=0} \right. \\[4pt]
+        &\left. + \frac{1}{\lambda}\int_0^T (\nabla_z \psi \nabla_x b - \nabla_z \partial_s \psi)(\sigma^{-1})^T dB_s\right) \\[4pt]
+        &\times e^{-F(X)} \bigg| X_0 = x\Bigg]
+        \end{aligned}
+        \end{equation}
+    \end{alertblock}
+    
+    where $\psi(z,s)$ is a "path shift" function with $\psi(z,0) = z$ and $\psi(0,s) = 0$.
+    
+    \vspace{0.8cm}
+    
+    \begin{block}{SOCM's Specific Choice}
+        SOCM chooses a \textcolor{red}{\textbf{linear path shift}}: $\psi_t(z,s) = M_t(s)^T z$ with $M_t(t) = I$
+        
+        This gives: $\nabla_z \psi_t(0,s) = M_t(s)$ and $\nabla_z \partial_s \psi_t(0,s) = \partial_s M_t(s)$
+        
+        The reparameterization matrix $M_t(s)$ becomes a learnable parameter for variance reduction!
+    \end{block}
+
+    \begin{alertblock}{Path-wise Reparameterization Solution}
+        Transform the intractable gradient into a computable expectation:
+        \begin{equation}
+        \begin{aligned}
+        &\nabla_x \mathbb{E}\left[\exp\left(-\lambda^{-1}\int_t^T f(X_s,s)ds - \lambda^{-1}g(X_T)\right) \bigg| X_t = x\right] \\[6pt]
+        &= \mathbb{E}\Bigg[\left(-\lambda^{-1}\int_t^T M_t(s)\nabla_x f(X_s,s)ds - \lambda^{-1}M_t(T)\nabla g(X_T)\right. \\[4pt]
+        &\qquad\quad \left.+ \lambda^{-1/2}\int_t^T (M_t(s)\nabla_x b(X_s,s) - \partial_s M_t(s))(\sigma^{-1})^T(s)dB_s\right) \\[4pt]
+        &\qquad\quad \times \exp\left(-\lambda^{-1}\int_t^T f(X_s,s)ds - \lambda^{-1}g(X_T)\right) \bigg| X_t = x\Bigg]
+        \end{aligned}
+        \end{equation}
+    \end{alertblock}
+    
+    % \textbf{Key Achievement:} We moved the gradient \textcolor{ForestGreen}{\textbf{inside}} the expectation, making it computable along sample paths.
+
+\end{frame}
 
 \begin{frame}[allowframebreaks]{Matching Vector Field (3/3) - Girsanov Theorem}
 
     \begin{center}
-        \Large\textcolor{ForestGreen}{\textbf{Step 3 — Girsanov Theorem Application}}
+        \Large\textcolor{ForestGreen}{\textbf{Step 3 — Girsanov Theorem}}
     \end{center}
     
     \vspace{0.3cm}
     
-    \begin{block}{The Goal}
-        Transform expectations from the uncontrolled process to a controlled process using measure theory.
+    \begin{block}{SOCM Loss in Construction}
+        From Steps 1-2, we have the theoretical loss function:
+        \begin{equation}
+        \begin{aligned}
+        \tilde{\mathcal{L}}(u) = \mathbb{E}\Bigg[\frac{1}{T}\int_0^T \Bigg\|u(X_t,t) + \sigma(t)^T \Bigg(
+        &\int_t^T M_t(s)\nabla_x f(X_s,s)ds + M_t(T)\nabla g(X_T) \\[4pt]
+        &- \lambda^{1/2}\int_t^T (M_t(s)\nabla_x b(X_s,s) - \partial_s M_t(s))(\sigma^{-1})^T(s)dB_s
+        \Bigg)\Bigg\|^2 dt \\[4pt]
+        &\times \exp\left(-\lambda^{-1}\int_0^T f(X_t,t)dt - \lambda^{-1}g(X_T)\right) + K\Bigg]
+        \end{aligned}
+        \end{equation}
+        
+        \textbf{Problem:} This expectation is under the \textcolor{blue}{\textbf{uncontrolled}} measure, but we need to sample using an \textcolor{orange}{\textbf{arbitrary control}} $v$ for practical training.
     \end{block}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]{Matching Vector Field (3/3) - Girsanov Theorem (continued)}
+
+    
+    \begin{alertblock}{Girsanov Measure Change}
+        To transform from uncontrolled to controlled sampling, Girsanov theorem:
+        
+        \textbf{Changes the drift:} $dX_t = b dt + \sqrt{\lambda}\sigma dB_t$ → $dX_t^v = (b + \sigma v) dt + \sqrt{\lambda}\sigma dB_t$
+        
+        \textbf{Introduces importance weight:} 
+        $$\alpha(v, X^v, B) = \exp\left(-\frac{1}{\sqrt{\lambda}}\int_0^T \langle v, dB_t\rangle - \frac{1}{2\lambda}\int_0^T \|v\|^2 dt\right)$$
+        
+        \textbf{Modifies the exponential weight:} The original $\exp(-\lambda^{-1}\int f - \lambda^{-1}g)$ becomes part of the full importance weight.
+    \end{alertblock}
     
     \vspace{0.5cm}
     
-    \subsection*{The Challenge: Measure Mismatch}
-    
-    From Step 2, we have the matching vector field $w$ computed under the \textcolor{blue}{\textbf{uncontrolled}} process. But in practice, we need to train on trajectories we can actually generate using a reference control $v$.
-    
-    \textbf{Controlled SDE:} We simulate trajectories with reference control $v$:
-    $$dX_s^v = (b + \sigma v)(X_s^v, s) ds + \sqrt{\lambda} \sigma(s) dB_s$$
-    
-    \textbf{Problem:} Expectations are under different measures!
-    \begin{itemize}
-        \item Our theory assumes the \textcolor{red}{uncontrolled} measure 
-        \item Our training uses the \textcolor{blue}{controlled} measure with $v$
-    \end{itemize}
-    
-    \vspace{0.8cm}
-    
-    \subsection*{Girsanov Theorem to the Rescue}
-    
-    The Girsanov theorem allows us to change measures from uncontrolled to controlled via an \textcolor{orange}{\textbf{importance weight}}:
-    
-    \begin{alertblock}{Importance Weight $\alpha(v, X^v, B)$}
+    \begin{alertblock}{Final SOCM Loss}
+        After Girsanov transformation, we get the practical SOCM loss:
         \begin{equation}
-        \begin{aligned}
-        \alpha(v, X^v, B) = \exp\!\Bigg(
-        &\textcolor{red}{- \frac{1}{\lambda}\int_0^T f(X_t^v, t)\, dt - \frac{1}{\lambda} g(X_T^v)} \\[4pt]
-        &\textcolor{blue}{- \frac{1}{\sqrt{\lambda}} \int_0^T \langle v(X_t^v, t), dB_t \rangle} \\[4pt]
-        &\textcolor{ForestGreen}{- \frac{1}{2\lambda} \int_0^T \| v(X_t^v, t) \|^2 dt}
-        \Bigg)
-        \end{aligned}
+        \boxed{
+        \mathcal{L}_{SOCM}(u, M) = \mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X^v_t,t) - w(t, v, X^v, B, M_t)\|^2 dt \times \alpha(v, X^v, B)\right]
+        }
         \end{equation}
-    \end{alertblock}
-    
-    \textbf{Component breakdown:}
-    \begin{itemize}
-        \item \textcolor{red}{\textbf{Cost terms:}} Running cost $f$ and terminal cost $g$
-        \item \textcolor{blue}{\textbf{Stochastic correction:}} Accounts for the stochastic integral with control $v$
-        \item \textcolor{ForestGreen}{\textbf{Control effort:}} Quadratic penalty for control magnitude
-    \end{itemize}
-    
-    \vspace{0.8cm}
-    
-    \subsection*{Brownian Motion Shift}
-    
-    Under the new measure, the Brownian motion transforms as:
-    $$dB_s = dB_s^{(v)} - \frac{1}{\sqrt{\lambda}} v(X_s^v, s) ds$$
-    
-    This \textcolor{orange}{\textbf{Brownian shift}} splits the stochastic term from Step 2 into:
-    $$\sqrt{\lambda} \int_t^T (M_t\nabla_x b - \partial_s M_t)(\sigma^{-1})^T dB_s = \underbrace{\sqrt{\lambda} \int_t^T (\cdots) dB_s^{(v)}}_{\text{martingale}} - \underbrace{\int_t^T (M_t\nabla_x b - \partial_s M_t)(\sigma^{-1})^T v \, ds}_{\text{deterministic}}$$
-    
-    \vspace{0.8cm}
-    
-    \subsection*{Final Result: Complete Matching Vector Field}
-    
-    Combining all three steps and multiplying by $\sigma^T(t)$ from Lemma 1:
-    
-    \begin{alertblock}{Complete SOCM Matching Target}
-        \begin{equation}
-        \begin{aligned}
-        w(t, v, X^v, B, M_t) = \sigma(t)^T \Bigg(
-        &\textcolor{red}{- \int_t^T M_t(s) \nabla_x f(X_s^v, s)\, ds - M_t(T)\nabla g(X_T^v)} \\[4pt]
-        &\textcolor{blue}{+ \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^T v(X_s^v, s)\, ds} \\[4pt]
-        &\textcolor{ForestGreen}{+ \sqrt{\lambda} \int_t^T \big(M_t(s)\nabla_x b(X_s^v, s) - \partial_s M_t(s)\big)(\sigma^{-1}(s))^T dB_s^{(v)}}
-        \Bigg)
-        \end{aligned}
-        \end{equation}
-    \end{alertblock}
-    
-    \vspace{0.8cm}
-    
-    \begin{block}{Why Girsanov is Essential}
-        \textbf{Key Achievement:} We can now train on trajectories generated with reference control $v$, while the importance weight $\alpha$ corrects for the distributional mismatch.
         
-        \vspace{0.3cm}
-        
-        This ensures the target remains \textcolor{blue}{\textbf{unbiased}} for the true optimum, enabling practical implementation of SOCM with:
+        where:
         \begin{itemize}
-            \item Computable matching targets $w$ from sample paths
-            \item Proper measure correction via $\alpha$
-            \item Least-squares objective: $\min_{u,M} \mathbb{E}[\|u(X^v_t,t) - w(\cdot)\|^2 \times \alpha]$
+            \item $w$ is the matching vector field (from the reparameterization terms)
+            \item $\alpha$ is the complete importance weight including costs and control effort
+            \item Trajectories $X^v$ are generated using the practical control $v$
         \end{itemize}
-    \end{block}
+    \end{alertblock}
     
-    \framebreak
+    \vspace{0.5cm}
+    
+    \begin{block}{Key Achievement}
+        \textbf{Girsanov bridges theory and practice:} We can train on controlled trajectories $X^v$ while the importance weight $\alpha$ ensures we're still optimizing the original SOC objective.
+        
+        The extra drift shift from $v$ generates both the $v$-dependent terms in $w$ and the corrective importance weight $\alpha$.
+    \end{block}
+
 \end{frame}
 
+\begin{comment}
     
-\begin{frame}{Importance Weight (1/2)}
+\begin{frame}{Importance Weight}
     
     \begin{block}{Importance Weight $\alpha(v, X^v, B)$}
         \small
@@ -801,7 +820,10 @@
     }
 
 \end{frame}
+\end{comment}
 
+\begin{comment}
+    
 \begin{frame}[allowframebreaks]{Bias-Variance Decomposition of the SOCM Loss}
     
     \begin{block}{Key Insight: Clean Separation}
@@ -880,6 +902,8 @@
     \end{alertblock}
     
 \end{frame}
+\end{comment}
+
 
 
 \begin{frame}{SOCM Algorithm}
@@ -905,41 +929,6 @@
         
         For multi-dimensional benchmarks: $dX_t = Ax dt + \sigma dB_t$ with linear drift $b(x,t) = Ax$
     \end{block}
-    
-    \vspace{0.5cm}
-    
-    \begin{columns}[t]
-        \column{0.48\textwidth}
-        \begin{alertblock}{Quadratic OU (LQR Class)}
-            \small
-            \textbf{Dynamics:} OU with quadratic costs
-            $$f(x,t) = x^T P x, \quad g(x) = x^T Q x$$
-            
-            \textbf{Key Feature:} This is a \textcolor{red}{\textbf{Linear-Quadratic Regulator}} problem
-            
-            \textbf{Optimal Control (Known):}
-            $$u_t^*(x) = -2\sigma_0^T F_t x$$
-            where $F_t$ solves a Riccati ODE
-            
-            \textcolor{ForestGreen}{\textbf{Perfect for testing:}} Can measure exact $L_2$ control error!
-        \end{alertblock}
-        
-        \column{0.48\textwidth}
-        \begin{block}{Linear OU}
-            \small
-            \textbf{Dynamics:} Linear drift $b(x,t) = Ax$
-            
-            \textbf{Costs:} 
-            \begin{itemize}
-                \item No running cost: $f = 0$
-                \item Linear terminal: $g(x) = \langle\gamma, x\rangle$
-            \end{itemize}
-            
-            \textbf{Optimal Control:} Also available in \textcolor{blue}{\textbf{closed form}}
-            
-            \textcolor{orange}{\textbf{Simpler case}} for initial validation
-        \end{block}
-    \end{columns}
     
     \vspace{0.8cm}
     
