@@ -677,29 +677,32 @@
     
     \subsection*{Theoretical Foundation: General Reparameterization Theorem}
     
-    This transformation comes from a general theorem for Fréchet-differentiable functionals $F(X)$:
+    \begin{block}{Fréchet-differentiable functional}
+        
     
-    \begin{alertblock}{Proposition 4: Path-wise Reparameterization}
-        \begin{equation}
-        \begin{aligned}
-        \nabla_x \mathbb{E}[\exp(-F(X)) | X_0 = x] = \mathbb{E}\Bigg[
-        &\left(-\nabla_z F(X + \psi)\big|_{z=0} \right. \\[4pt]
-        &\left. + \frac{1}{\lambda}\int_0^T (\nabla_z \psi \nabla_x b - \nabla_z \partial_s \psi)(\sigma^{-1})^T dB_s\right) \\[4pt]
-        &\times e^{-F(X)} \bigg| X_0 = x\Bigg]
-        \end{aligned}
-        \end{equation}
-    \end{alertblock}
-    
-    where $\psi(z,s)$ is a "path shift" function with $\psi(z,0) = z$ and $\psi(0,s) = 0$.
+    In functional analysis, we often deal with functionals: mappings from a space of functions or paths into $\mathbb{R}$.
+
+    Here $F$ takes a whole path $X = (X_s)_{s \in [0,T]}$ and outputs a number (total cost).
+
+    $$\nabla_x \mathbb{E}[e^{-F(X)} | X_0 = x] = \mathbb{E}\left[\left(-\nabla_z F(X + \psi)\big|_{z=0} + \cdots\right) e^{-F(X)} \,\middle|\, X_0 = x\right].$$
+
+    \end{block}
+
+    The Fréchet derivative $\nabla_z F(X + \psi)$ expresses how $F$ changes under a small path shift $\psi$.
+
+    This is what allows you to write the gradient of an expectation in terms of expectations over pathwise terms, instead of REINFORCE-style score-function estimators.
+
+    $$\nabla_x \mathbb{E}[h(X)] = \mathbb{E}[\nabla_x h(X)] + \mathbb{E}[h(X) \cdot \nabla_x \log p(X|x)] $$
     
     \vspace{0.8cm}
     
     \begin{block}{SOCM's Specific Choice}
-        SOCM chooses a \textcolor{red}{\textbf{linear path shift}}: $\psi_t(z,s) = M_t(s)^T z$ with $M_t(t) = I$
-        
-        This gives: $\nabla_z \psi_t(0,s) = M_t(s)$ and $\nabla_z \partial_s \psi_t(0,s) = \partial_s M_t(s)$
-        
-        The reparameterization matrix $M_t(s)$ becomes a learnable parameter for variance reduction!
+
+        We assume our cost functional $F(X)$ is Fréchet differentiable, meaning it's smooth with respect to small perturbations of the path. This technical assumption lets us compute pathwise gradients instead of relying on high-variance score-function estimators.
+
+        \vspace{0.1cm}
+
+        The small perturbations are modeled by a matrix $M_t(s)$ which becomes a learnable parameter for variance reduction!
     \end{block}
 
     \begin{alertblock}{Path-wise Reparameterization Solution}
@@ -708,13 +711,14 @@
         \begin{aligned}
         &\nabla_x \mathbb{E}\left[\exp\left(-\lambda^{-1}\int_t^T f(X_s,s)ds - \lambda^{-1}g(X_T)\right) \bigg| X_t = x\right] \\[6pt]
         &= \mathbb{E}\Bigg[\left(-\lambda^{-1}\int_t^T M_t(s)\nabla_x f(X_s,s)ds - \lambda^{-1}M_t(T)\nabla g(X_T)\right. \\[4pt]
-        &\qquad\quad \left.+ \lambda^{-1/2}\int_t^T (M_t(s)\nabla_x b(X_s,s) - \partial_s M_t(s))(\sigma^{-1})^T(s)dB_s\right) \\[4pt]
-        &\qquad\quad \times \exp\left(-\lambda^{-1}\int_t^T f(X_s,s)ds - \lambda^{-1}g(X_T)\right) \bigg| X_t = x\Bigg]
+        &\qquad\quad \left.+ \lambda^{-1/2}\int_t^T (M_t(s)\nabla_x b(X_s,s) - \partial_s M_t(s))(\sigma^{-1})^T(s)dB_s\right) \Bigg]
         \end{aligned}
         \end{equation}
+
+        \small
+     So instead of gradient of expectation over all futures (intractable), you now have expectation of computable pathwise/local terms on the state space (tractable).
     \end{alertblock}
-    
-    % \textbf{Key Achievement:} We moved the gradient \textcolor{ForestGreen}{\textbf{inside}} the expectation, making it computable along sample paths.
+
 
 \end{frame}
 
