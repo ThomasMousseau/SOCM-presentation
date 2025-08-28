@@ -242,14 +242,14 @@
         The prevalence of SOC formulations in modern ML motivates the need for more efficient and stable solving methods.
     \end{alertblock}
 
-    \note{\textcolor{red}{Je dois etre capable de vraiment bien expliquer les applications du SOC dans le ML moderne pour pouvoir demontrer l'importance d'avoir pris ce papier}}
+    % \note{\textcolor{red}{Je dois etre capable de vraiment bien expliquer les applications du SOC dans le ML moderne pour pouvoir demontrer l'importance d'avoir pris ce papier}}
 \end{frame}
 
 \begin{frame}{Solve SOC Problems in Low Dimension}
     \vspace{-0.1cm}
     
     \begin{block}{Classical Approach: Hamilton-Jacobi-Bellman PDE}
-        In small state spaces (1D, 2D, sometimes 3D), discretize the state space and solve the HJB PDE directly:
+        In small state spaces, discretize the state space and solve the HJB PDE directly. After applying dynamic programming and Bellman's optimality principle we get:
         \begin{equation}
         \frac{\partial V}{\partial t} + \min_u \left[ \frac{1}{2}\|u\|^2 + f(x,t) + \nabla V \cdot (b + \sigma u) + \frac{1}{2}\lambda \text{tr}(\sigma^T \nabla^2 V \sigma) \right] = 0
         \end{equation}
@@ -274,19 +274,16 @@
                 \item \textcolor{red}{\textbf{Grid size:}} $\mathcal{O}(N^d)$ where $d$ is dimension
                 \item \textcolor{red}{\textbf{Memory:}} Exponential growth with $d$
                 \item \textcolor{red}{\textbf{Computation:}} Infeasible for $d > 3$
-                \item \textcolor{red}{\textbf{Impossible}} to discretize for $d \gg 1$
             \end{itemize}
         \end{alertblock}
     \end{columns}
+    % \note{
+    %     \textbf{Works perfectly in low dimensions, but state space grows exponentially with dimension.}
 
-
-    \note{
-        \textbf{Works perfectly in low dimensions, but state space grows exponentially with dimension.}
-
-    \textcolor{blue}{\textbf{Classical HJB:}} In low dimensions, you can discretize the entire state space on a grid and solve the HJB PDE using finite difference methods. This gives you the exact solution but becomes computationally impossible as dimension increases. \\
-    \vspace{0.1cm}
-    \textcolor{red}{\textbf{Curse of Dimensionality:}} For a $d$-dimensional problem with $N$ grid points per dimension, you need $N^d$ total grid points. Even modest problems ($d=10$, $N=100$) require $100^{10} = 10^{20}$ grid points.
-    }
+    % \textcolor{blue}{\textbf{Classical HJB:}} In low dimensions, you can discretize the entire state space on a grid and solve the HJB PDE using finite difference methods. This gives you the exact solution but becomes computationally impossible as dimension increases. \\
+    % \vspace{0.1cm}
+    % \textcolor{red}{\textbf{Curse of Dimensionality:}} For a $d$-dimensional problem with $N$ grid points per dimension, you need $N^d$ total grid points. Even modest problems ($d=10$, $N=100$) require $100^{10} = 10^{20}$ grid points.
+    % }
 \end{frame}
 
 \begin{frame}{Solve SOC Problems in High Dimension}
@@ -320,17 +317,6 @@
             \end{itemize}
         \end{alertblock}
     \end{columns}
-    
-    \note{
-    \textbf{Highly non-convex functional landscape makes optimization extremely challenging.} \\
-    Traditional SOC methods struggle with local minima and unstable training dynamics.
-
-    \vspace{0.1cm}
-
-    \textcolor{blue}{\textbf{Adjoint Methods:}} These methods solve the forward SDE and then use the adjoint equation to compute gradients efficiently. This allows gradient-based optimization of the control parameters without discretizing the state space. \\
-    \vspace{0.1cm}
-    \textcolor{red}{\textbf{Non-convex Optimization:}} The major challenge is that the resulting optimization landscape is highly non-convex, leading to difficult optimization with many local minima and unstable training dynamics.
-    }
 \end{frame}
 
 \begin{frame}{Similar Trend in Generative Modeling}
@@ -503,62 +489,85 @@
     The value function is defined as the infimum over all controls:
     $$V(x,t) = \inf_u J(u; x,t) = \inf_u \mathbb{E}\left[\int_t^T \left(\frac{1}{2}\|u(X_s^u, s)\|^2 + f(X_s^u, s)\right) ds + g(X_T^u) \,\middle|\, X_t^u = x\right]$$
     
-    \vspace{0.5cm}
     
     \subsection*{Infinitesimal Generator and HJB Equation}
+
+    \vspace{0.5cm}
+
+    We introduce a small step $h$ so we can expand the cost-to-go function with dynamic programming recursion. Then using Itô's lemma (the stochastic version of the chain rule) this expansion produces the gradient and Hessian terms in the HJB. Shrinking $h$ to zero converts the global Bellman principle into a local PDE.
+    $$V(x, t) = \min_{u} \mathbb{E}\left[ \int_{t}^{t+h} \left( \frac{1}{2} \|u_s\|^2 + f(X_s, s) \right) ds + V(X_{t+h}, t+h) \,\Big|\, X_t = x \right]$$
     
-    Assume $\sigma(t)$ is invertible and enters both drift (via $\sigma u$) and diffusion, and control cost is quadratic. This enables the Cole-Hopf linearization.
-    
-    The \textcolor{blue}{\textbf{infinitesimal generator}} $L$ of the uncontrolled diffusion $dX_t = b(x,t) \, dt + \sqrt{\lambda} \sigma(t) \, dB_t$ is:
-    $$L := \frac{\lambda}{2} \sum_{i,j=1}^d (\sigma\sigma^\top)_{ij}(t) \frac{\partial^2}{\partial x_i \partial x_j} + \sum_{i=1}^d b_i(x,t) \frac{\partial}{\partial x_i}$$
-    
-    The Hamilton-Jacobi-Bellman equation becomes (minimize pointwise in $(x,t)$):
-    $$\frac{\partial V}{\partial t} + LV + \inf_u \left[\frac{1}{2}\|u\|^2 + \langle\sigma^\top \nabla V, u\rangle + f\right] = 0$$
-    
+    \vspace{0.2cm}
+    \textbf{Based on Itô's lemma}
+
+    Expand $V(X_{t+h}, t+h)$ using Itô's lemma:
+    $$dV = \partial_t V \, ds + \nabla V^\top dX_s + \frac{1}{2} \text{tr}[\sigma\sigma^\top \nabla^2 V] \lambda \, ds.$$
+
+    Substituting $dX_s = b \, ds + \sigma u \, ds + \sqrt{\lambda} \sigma \, dB_s$, and taking expectation (the Brownian term vanishes):
+    $$\mathbb{E}[dV] = \left[\partial_t V + \nabla V \cdot (b + \sigma u) + \frac{\lambda}{2} \text{tr}(\sigma^\top \nabla^2 V) \right] ds.$$
+
     \vspace{0.5cm}
     
     \subsection*{Deriving the Optimal Control}
-    
-    To find the infimum, we differentiate the quadratic expression with respect to $u$ (complete the square):
-    $$\frac{\partial}{\partial u}\left[\frac{1}{2}\|u\|^2 + \langle\sigma^\top \nabla V, u\rangle\right] = u + \sigma^\top \nabla V = 0$$
-    
-    This gives us the \textcolor{red}{\textbf{optimal control}}:
+
+    The expected increment equation plugged into the dynamic programming principle gave you the HJB PDE
+    $$\frac{\partial V}{\partial t} + f(x,t) + \nabla V \cdot (b + \sigma u) + \frac{\lambda}{2} \text{tr}(\sigma^\top \nabla^2 V \sigma) + \frac{1}{2} \|u\|^2 = 0 $$
+
+    Minimizing this gives us the \textcolor{red}{\textbf{optimal control}}:
     $$u^*(x,t) = -\sigma^\top(t)\nabla V(x,t)$$
-    
-    Substituting back into the HJB equation:
-    $$\frac{\partial V}{\partial t} + LV - \frac{1}{2}\|\sigma^\top \nabla V\|^2 + f = 0, \quad V(x,T) = g(x)$$
-    
+
+    And the reduced HJB using $u^*$ is:
+    $$\frac{\partial V}{\partial t} + f + b \cdot \nabla V + \frac{\lambda}{2} \text{tr}(\sigma^\top \nabla^2 V \sigma) - \frac{1}{2} \|\sigma^\top \nabla V\|^2 = 0, \quad V(x,T) = g(x)$$
+
     \vspace{0.8cm}
-    
-    \begin{alertblock}{Reminder (Linear Case)}
-        If $\frac{\partial w}{\partial t} + Lw + q = 0$ with $w(x,T) = h(x)$, then Feynman-Kac gives:
-        $$w(x,t) = \mathbb{E}\left[h(X_T) - \int_t^T q(X_s,s) ds \,\middle|\, X_t = x\right]$$
+
+    \textbf{The HJB is nonlinear because of the quadratic gradient term. To linearize it, we do the Cole–Hopf transformation:}
+
+    $$V(x,t) = -\lambda \log \phi(x,t).$$
+
+    \vspace{1.8cm}
+
+    Plugging into the reduced HJB cancels the $-\frac{1}{2}\|\sigma^\top \nabla V\|^2$ term and gives a linear PDE for $\phi$:
+
+    $$\frac{\partial \phi}{\partial t} + L\phi + \frac{1}{\lambda}f(x,t) \phi = 0, \quad \phi(x,T) = e^{-g(x)/\lambda}.$$
+
+    Here $L$ is the infinitesimal generator of the uncontrolled diffusion:
+
+    $$L\phi = b \cdot \nabla \phi + \frac{\lambda}{2} \text{tr}(\sigma\sigma^\top \nabla^2 \phi).$$
         
-        \textbf{The HJB for $V$ is nonlinear; we apply Feynman-Kac to the linear PDE for $\phi$, then set $V = -\lambda \log \phi$.}
-    \end{alertblock}
+    \textbf{The Feynman–Kac theorem says: the solution to this linear PDE equals an expectation over uncontrolled trajectories:}
 
-    \textbf{Cole-Hopf transformation:} $V(x,t) = -\lambda \log \phi(x,t)$
+    $$\phi(x,t) = \mathbb{E}_0\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right].$$
 
-    \textbf{Linearized PDE for $\phi$:} 
-    $$\frac{\partial \phi}{\partial t} + L\phi + \frac{1}{\lambda}f\phi = 0, \quad \phi(x,T) = e^{-g(x)/\lambda}$$
+    Thus
+    $$V(x,t) = -\lambda \log \phi(x,t).$$
 
-    \textbf{Feynman-Kac applied to $\phi$:}
-    $$\phi(x,t) = \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right] \text{ (uncontrolled SDE)}$$
-    
     \vspace{0.8cm}
     
+
     \subsection*{Result: Lemma 1}
     
-    Set $V(x,t) := \phi(x,t)$, so the \textcolor{orange}{\textbf{partition function}} is:
-    $$V(x,t) = \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
-    
-    Then the optimal control becomes:
+    \textbf{Remember}
+
+    $$u^*(x,t) = -\sigma^\top \nabla V(x,t).$$
+
+    Substitute $V = -\lambda \log \phi$:
+
+    $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log \phi(x,t).$$
+
+    \vspace{2.0cm}
+    Define the "partition function" (unnormalized density):
+
+    $$Z(x,t) = \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right].$$
+
+    Then the final path–integral representation is:
+
+    $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log Z(x,t).$$
+
+    This is exactly Lemma 1 (Kappen 2005): the optimal control is the score of a
 
     \begin{alertblock}{Path-integral Optimal Control}
-        % $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log Z(x,t)$$
         $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
-
-        % \footnotesize{$\nabla_x$ is the gradient w.r.t. the initial condition $X_t = x$, not a terminal-state score.}
     \end{alertblock}
     
     % \vspace{-0.1cm}
