@@ -589,16 +589,19 @@
     \Large\textcolor{red}{\textbf{Step 2 — Rendering $u^*$ Trackable using Pathwise reparameterization (under the \emph{uncontrolled} law)}}
     \end{center}
 
+    \begin{alertblock}{Path-integral Optimal Control}
+        $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+    \end{alertblock}
+
     \begin{block}{Reasons Why $u^*$ is not Trackable}
-        Je dois expliquer pourquoi on ne peut pas prendre u optimal directement.
-        % \textbf{What if} we could compute the optimal control $u^*(X_t, t)$ during training? We would simply minimize the $L_2$ distance between our learned control $u$ and the true optimum $u^*$.
+        Computing this conditional expectation means integrating over the entire path space starting from $X_t = x$, which is intractable in high dimensions.
     \end{block}
     
     \vspace{0.5cm}
     
     \begin{alertblock}{Ideal Loss Function}
         \begin{equation}
-        \tilde{\mathcal{L}}(u) = \mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X_t,t) - u^*(X_t,t)\|^2 dt \exp\left(-\lambda^{-1}\int_0^T f(X_t,t) dt - \lambda^{-1}g(X_T)\right)\right]
+        \tilde{\mathcal{L}}(u) = \mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X_t,t) - u^*(X_t,t)\|^2 dt \right]
         \end{equation}
     \end{alertblock}
     
@@ -611,8 +614,7 @@
     \begin{equation}
     \begin{aligned}
     \tilde{\mathcal{L}}(u) = \mathbb{E}\Bigg[\frac{1}{T}\int_0^T \Big(
-    &\|u(X_t,t)\|^2 - 2\langle u(X_t,t), u^*(X_t,t)\rangle + \|u^*(X_t,t)\|^2\Big) dt \\[4pt]
-    &\times \exp\left(-\lambda^{-1}\int_0^T f(X_t,t) dt - \lambda^{-1}g(X_T)\right)\Bigg]
+    &\|u(X_t,t)\|^2 - 2\langle u(X_t,t), u^*(X_t,t)\rangle + \|u^*(X_t,t)\|^2\Big) dt \Bigg]
     \end{aligned}
     \end{equation}
         
@@ -653,22 +655,18 @@
     \begin{aligned}
     &\mathbb{E}\left[\frac{1}{T}\int_0^T \langle u(X_t,t), u^*(X_t,t)\rangle dt \exp\left(-\lambda^{-1}\int_0^T f(X_t,t) dt - \lambda^{-1}g(X_T)\right)\right] \\[8pt]
     &= \lambda \mathbb{E}\left[\frac{1}{T}\int_0^T \left\langle u(X_t,t), \sigma(t)^T \nabla_x \mathbb{E}\left[\exp\left(-\lambda^{-1}\int_t^T f(X_s,s) ds - \lambda^{-1}g(X_T)\right) \middle| X_t = x\right]\right\rangle \right. \\[4pt]
-    &\qquad\qquad\qquad\qquad\qquad \left. \times \exp\left(-\lambda^{-1}\int_0^t f(X_s,s) ds\right) dt\right]
     \end{aligned}
     \end{equation}
     
     \vspace{0.5cm}
     
     \begin{alertblock}{Next Challenge}
-        The transformed cross term still contains an intractable expectation. This is where path-wise reparameterization becomes essential to make this computable since
-        Monte-Carlo “score-function” (REINFORCE) estimators for this expectation have prohibitively high variance.
+        The transformed cross term still contains an intractable expectation. This is where path-wise reparameterization trick (novel approach introduced by this paper) becomes essential to make this computable.
     \end{alertblock}
 
     \begin{block}{The Challenge: Intractable Conditional Expectation}
         From Step 2, we need to make this computable for training:
         $$\nabla_x \mathbb{E}\left[\exp\left(-\lambda^{-1}\int_t^T f(X_s,s)ds - \lambda^{-1}g(X_T)\right) \bigg| X_t = x\right]$$
-        
-        \textbf{Standard approach:} Monte-Carlo score estimators → \textcolor{red}{\textbf{prohibitively high variance}}
     \end{block}
     
     \vspace{0.5cm}
