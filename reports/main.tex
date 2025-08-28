@@ -731,16 +731,17 @@
     \vspace{0.3cm}
     
     \begin{block}{SOCM Loss in Construction}
-        From Steps 1-2, we have the theoretical loss function:
-        \begin{equation}
-        \begin{aligned}
-        \tilde{\mathcal{L}}(u) = \mathbb{E}\Bigg[\frac{1}{T}\int_0^T \Bigg\|u(X_t,t) + \sigma(t)^T \Bigg(
-        &\int_t^T M_t(s)\nabla_x f(X_s,s)ds + M_t(T)\nabla g(X_T) \\[4pt]
-        &- \lambda^{1/2}\int_t^T (M_t(s)\nabla_x b(X_s,s) - \partial_s M_t(s))(\sigma^{-1})^T(s)dB_s
-        \Bigg)\Bigg\|^2 dt \\[4pt]
-        &\times \exp\left(-\lambda^{-1}\int_0^T f(X_t,t)dt - \lambda^{-1}g(X_T)\right) + K\Bigg]
-        \end{aligned}
-        \end{equation}
+    From Steps 1-2, we have the theoretical loss function:
+    \begin{equation}
+    \begin{aligned}
+    \tilde{\mathcal{L}}(u) = \mathbb{E}\Bigg[\frac{1}{T}\int_0^T \Bigg\|u(X_t,t) + \sigma(t)^T \Bigg(
+    &\int_t^T M_t(s)\nabla_x f(X_s,s)ds \\[3pt]
+    &+ M_t(T)\nabla g(X_T) \\[3pt] 
+    &- \lambda^{1/2}\int_t^T (M_t(s)\nabla_x b(X_s,s) \\[3pt]
+    &\qquad - \partial_s M_t(s))(\sigma^{-1})^T(s)dB_s
+    \Bigg)\Bigg\|^2 dt \Bigg]
+    \end{aligned}
+    \end{equation}
         
         \textbf{Problem:} This expectation is under the \textcolor{blue}{\textbf{uncontrolled}} measure, but we need to sample using an \textcolor{orange}{\textbf{arbitrary control}} $v$ for practical training.
     \end{block}
@@ -751,14 +752,14 @@
 
     
     \begin{alertblock}{Girsanov Measure Change}
-        To transform from uncontrolled to controlled sampling, Girsanov theorem:
+        By changing the drift of the system, we need to account for this by using the Girsanov theorem.
         
-        \textbf{Changes the drift:} $dX_t = b dt + \sqrt{\lambda}\sigma dB_t$ → $dX_t^v = (b + \sigma v) dt + \sqrt{\lambda}\sigma dB_t$
-        
-        \textbf{Introduces importance weight:} 
+        \textbf{Introduces importance weight:}\\ 
         $$\alpha(v, X^v, B) = \exp\left(-\frac{1}{\sqrt{\lambda}}\int_0^T \langle v, dB_t\rangle - \frac{1}{2\lambda}\int_0^T \|v\|^2 dt\right)$$
         
-        \textbf{Modifies the exponential weight:} The original $\exp(-\lambda^{-1}\int f - \lambda^{-1}g)$ becomes part of the full importance weight.
+    Before Girsanov: the loss is under the uncontrolled measure $\rightarrow$ nice math, but intractable for training. \\
+        \vspace{0.2cm}
+    After Girsanov: we can sample under any arbitrary control $v$, but must reweight
     \end{alertblock}
     
     \vspace{0.5cm}
@@ -776,14 +777,6 @@
             \item Trajectories $X^v$ are generated using the practical control $v$
         \end{itemize}
     \end{alertblock}
-    
-    \vspace{0.5cm}
-    
-    \begin{block}{Key Achievement}
-        \textbf{Girsanov bridges theory and practice:} We can train on controlled trajectories $X^v$ while the importance weight $\alpha$ ensures we're still optimizing the original SOC objective.
-        
-        The extra drift shift from $v$ generates both the $v$-dependent terms in $w$ and the corrective importance weight $\alpha$.
-    \end{block}
 
 \end{frame}
 
@@ -807,30 +800,12 @@
     \begin{block}{What's an Ornstein-Uhlenbeck (OU) Process?}
         A \textcolor{blue}{\textbf{mean-reverting}} stochastic differential equation with linear drift and Gaussian noise:
         $$dX_t = \theta(\mu - X_t) dt + \sigma dB_t \quad \text{(1D case)}$$
-        
-        For multi-dimensional benchmarks: $dX_t = Ax dt + \sigma dB_t$ with linear drift $b(x,t) = Ax$
+
+        The Ornstein-Uhlenbeck process is a classic mean-reverting SDE with both drift and noise, simple enough to solve analytically but rich enough to test stochastic control methods. It serves as the ideal benchmark for evaluating SOCM's bias-variance tradeoff
     \end{block}
     
     \vspace{0.8cm}
     
-    \begin{alertblock}{Double-Well (Challenging Nonlinear Case)}
-        \textbf{Nonlinear drift from quartic potential:} $\Psi(x) = \sum_i \kappa_i (x_i^2 - 1)^2$ 
-        
-        \textbf{Multimodal terminal cost:} $g(x)$ has $2^d$ modes (exponentially many!)
-        
-        \textcolor{red}{\textbf{Highly challenging:}} Tests algorithm stability in complex, multimodal landscapes
-    \end{alertblock}
-    
-    \vspace{0.5cm}
-    
-    \begin{block}{Why OU-type Problems are Standard SOC Testbeds}
-        \begin{itemize}
-            \item \textcolor{blue}{\textbf{Ground truth available:}} Analytic $u^*$ for LQR/linear cases → direct $L_2$ control error measurement
-            \item \textcolor{orange}{\textbf{Controlled difficulty:}} Can dial complexity via matrix scaling ($A$, $P$, $Q$ parameters)
-            \item \textcolor{ForestGreen}{\textbf{Stress test variance:}} Reveals importance weight and gradient signal-to-noise issues
-            \item \textcolor{red}{\textbf{Multimodal landscapes:}} Double-Well tests stability in challenging optimization scenarios
-        \end{itemize}
-    \end{block}
 \end{frame}
 
 \begin{frame}{Experimental Results (1/2)}
@@ -845,13 +820,13 @@
         \centering
         \includegraphics[width=0.95\textwidth]{figures/plots_2.png}
     \end{figure}
-    \note{At the end of training, SOCM obtains the lowest L2
-        error, improving over all existing methods by a factor of
-        around ten. The two SOCM ablations come in second and third by a substantial difference, which underlines
-        the importance of the path-wise reparameterization trick.
-        \\
-        \textcolor{red}{JE DOIS COMPRENDRE CE QUE EST UN ORNSTEIN UHLENBECK PROCESS}
-        }
+    % \note{At the end of training, SOCM obtains the lowest L2
+    %     error, improving over all existing methods by a factor of
+    %     around ten. The two SOCM ablations come in second and third by a substantial difference, which underlines
+    %     the importance of the path-wise reparameterization trick.
+    %     \\
+    %     \textcolor{red}{JE DOIS COMPRENDRE CE QUE EST UN ORNSTEIN UHLENBECK PROCESS}
+    %     }
 \end{frame}
 
 %------------------------------------------------

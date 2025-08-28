@@ -88,28 +88,24 @@
 \headcommand {\beamer@framepages {34}{34}}
 \headcommand {\slideentry {2}{7}{2}{34/35}{}{0}}
 \headcommand {\beamer@framepages {34}{35}}
-\headcommand {\slideentry {2}{7}{2}{34/36}{}{0}}
-\headcommand {\beamer@framepages {34}{36}}
-\headcommand {\slideentry {2}{7}{3}{37/37}{}{0}}
+\headcommand {\slideentry {2}{7}{3}{36/36}{}{0}}
+\headcommand {\beamer@framepages {36}{36}}
+\headcommand {\beamer@sectionpages {8}{36}}
+\headcommand {\beamer@subsectionpages {8}{36}}
+\headcommand {\sectionentry {3}{Experiments and results}{37}{Experiments and results}{0}}
+\headcommand {\slideentry {3}{0}{1}{37/37}{}{0}}
 \headcommand {\beamer@framepages {37}{37}}
-\headcommand {\beamer@sectionpages {8}{37}}
-\headcommand {\beamer@subsectionpages {8}{37}}
-\headcommand {\sectionentry {3}{Experiments and results}{38}{Experiments and results}{0}}
-\headcommand {\slideentry {3}{0}{1}{38/38}{}{0}}
+\headcommand {\slideentry {3}{0}{2}{38/38}{}{0}}
 \headcommand {\beamer@framepages {38}{38}}
-\headcommand {\slideentry {3}{0}{1}{38/39}{}{0}}
-\headcommand {\beamer@framepages {38}{39}}
-\headcommand {\slideentry {3}{0}{2}{40/40}{}{0}}
+\headcommand {\slideentry {3}{0}{3}{39/39}{}{0}}
+\headcommand {\beamer@framepages {39}{39}}
+\headcommand {\beamer@sectionpages {37}{39}}
+\headcommand {\beamer@subsectionpages {37}{39}}
+\headcommand {\sectionentry {4}{Conclusion}{40}{Conclusion}{0}}
+\headcommand {\slideentry {4}{0}{1}{40/40}{}{0}}
 \headcommand {\beamer@framepages {40}{40}}
-\headcommand {\slideentry {3}{0}{3}{41/41}{}{0}}
-\headcommand {\beamer@framepages {41}{41}}
-\headcommand {\beamer@sectionpages {38}{42}}
-\headcommand {\beamer@subsectionpages {38}{42}}
-\headcommand {\sectionentry {4}{Conclusion}{43}{Conclusion}{0}}
-\headcommand {\slideentry {4}{0}{1}{43/43}{}{0}}
-\headcommand {\beamer@framepages {43}{43}}
-\headcommand {\beamer@partpages {1}{44}}
-\headcommand {\beamer@subsectionpages {43}{44}}
-\headcommand {\beamer@sectionpages {43}{44}}
-\headcommand {\beamer@documentpages {44}}
-\headcommand {\gdef \inserttotalframenumber {42}}
+\headcommand {\beamer@partpages {1}{41}}
+\headcommand {\beamer@subsectionpages {40}{41}}
+\headcommand {\beamer@sectionpages {40}{41}}
+\headcommand {\beamer@documentpages {41}}
+\headcommand {\gdef \inserttotalframenumber {40}}
