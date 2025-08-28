@@ -768,9 +768,7 @@
     \begin{alertblock}{Final SOCM Loss}
         After Girsanov transformation, we get the practical SOCM loss:
         \begin{equation}
-        \boxed{
         \mathcal{L}_{SOCM}(u, M) = \mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X^v_t,t) - w(t, v, X^v, B, M_t)\|^2 dt \times \alpha(v, X^v, B)\right]
-        }
         \end{equation}
         
         where:
@@ -790,121 +788,6 @@
     \end{block}
 
 \end{frame}
-
-\begin{comment}
-    
-\begin{frame}{Importance Weight}
-    
-    \begin{block}{Importance Weight $\alpha(v, X^v, B)$}
-        \small
-        The \textcolor{red}{\textbf{importance sampling weight}} for measure correction:
-        \vspace{-0.2cm}
-        \begin{equation}
-        \begin{aligned}
-        \alpha(v, X^v, B) = \exp\!\Bigg(
-        &- \frac{1}{\lambda}\int_0^T f(X_t^v, t)\, dt
-        - \frac{1}{\lambda} g(X_T^v) \\[4pt]
-        &- \frac{1}{\sqrt{\lambda}} \int_0^T \langle v(X_t^v, t), dB_t \rangle
-        - \frac{1}{2\lambda} \int_0^T \| v(X_t^v, t) \|^2 dt
-        \Bigg)
-        \end{aligned}
-        \end{equation}
-
-        Incorporates \textcolor{orange}{running costs}, \textcolor{orange}{terminal costs}, and \textcolor{orange}{control effort}
-    \end{block}
-
-    \note{
-    \textcolor{blue}{\textbf{Reparameterization Matrix $M_t$:}} This matrix enables path-wise reparameterization, a technique to reduce variance in gradient estimation by reparameterizing the stochastic process. It's optimized jointly with the control $u$ to minimize the overall SOCM loss. \\
-    \vspace{0.1cm}
-    \textcolor{red}{\textbf{Importance Weight $\alpha$:}} This exponential weight corrects for the mismatch between the learned control measure and the optimal control measure. However, it can have high variance when costs are large or in high dimensions, which is the main limitation of SOCM.
-    }
-
-\end{frame}
-\end{comment}
-
-\begin{comment}
-    
-\begin{frame}[allowframebreaks]{Bias-Variance Decomposition of the SOCM Loss}
-    
-    \begin{block}{Key Insight: Clean Separation}
-        The SOCM loss decomposes cleanly into two independent components:
-        \begin{itemize}
-            \item \textcolor{blue}{\textbf{Bias term:}} Depends only on control $u$, minimized at $u^*$
-            \item \textcolor{red}{\textbf{Variance term:}} Depends only on reparameterization matrices $M_t$
-        \end{itemize}
-    \end{block}
-    
-    \vspace{0.5cm}
-    
-    \begin{alertblock}{SOCM Loss Decomposition (Proposition 2)}
-        \begin{equation}
-        \underbrace{\mathcal{L}_{SOCM}(u, M)}_{\text{what we minimize}} = \underbrace{\mathbb{E}\left[\frac{1}{T}\int_0^T \|u(X_t^{u^*}, t) - u^*(X_t^{u^*}, t)\|^2 dt \, e^{-V(X^{u^*}, 0)/\lambda}\right]}_{\textcolor{blue}{\text{Bias of } u \text{ (= CE landscape)}}} + \underbrace{\text{CondVar}(w; M)}_{\textcolor{red}{\text{Variance of } w \text{ (tuned by } M \text{)}}}
-        \end{equation}
-    \end{alertblock}
-    
-    \vspace{0.8cm}
-    
-    \subsection*{Connection to Cross-Entropy (CE) Loss}
-    
-    \begin{block}{Same Optimization Landscape in $u$ (Lemma 2)}
-        The \textcolor{blue}{\textbf{bias term}} in SOCM is \textbf{exactly} the cross-entropy loss landscape:
-        \begin{itemize}
-            \item \textcolor{ForestGreen}{\textbf{Same optimum:}} Both minimize at $u^*$
-            \item \textcolor{ForestGreen}{\textbf{Same landscape:}} Identical curvature and critical points in $u$
-            \item \textcolor{orange}{\textbf{Different formulation:}} SOCM uses least-squares regression to target $w$
-        \end{itemize}
-    \end{block}
-
-    \vspace{-0.5cm}
-    \subsection*{Role of Reparameterization Matrix $M_t$}
-    
-    \begin{columns}[t]
-        \column{0.48\textwidth}
-        \begin{block}{What $M_t$ Does}
-            \begin{itemize}
-                \item \textcolor{red}{\textbf{Variance reduction only:}} Does not change the optimum $u^*$
-                \item \textcolor{blue}{\textbf{Stabilizes gradients:}} Reduces noise in the matching target $w$
-                \item \textcolor{ForestGreen}{\textbf{Improves convergence:}} Better sample efficiency and stability
-            \end{itemize}
-        \end{block}
-        
-        \column{0.48\textwidth}
-        \begin{alertblock}{What $M_t$ Does NOT Do}
-            \begin{itemize}
-                \item \textcolor{red}{\textbf{Does not change bias:}} $u^*$ remains the same
-                \item \textcolor{red}{\textbf{Does not alter optimum:}} Same solution as CE methods
-                \item \textcolor{red}{\textbf{Pure variance control:}} Only affects the conditional variance $\text{CondVar}(w; M)$
-            \end{itemize}
-        \end{alertblock}
-    \end{columns}
-    
-    \vspace{0.8cm}
-    
-    \begin{block}{SOCM = Cross-Entropy + Variance Reduction}
-        \textbf{Practical Interpretation:}
-        \begin{itemize}
-            \item SOCM keeps the \textcolor{blue}{\textbf{same objective}} and \textcolor{blue}{\textbf{optimum}} as cross-entropy methods
-            \item But reformulates it as a \textcolor{ForestGreen}{\textbf{least-squares regression}} problem: $\min_u \mathbb{E}[\|u - w\|^2]$
-            \item Introduces explicit \textcolor{red}{\textbf{variance reduction}} via learnable matrices $M_t$
-            \item Results in \textcolor{orange}{\textbf{better gradients}}, \textcolor{orange}{\textbf{faster convergence}}, and \textcolor{orange}{\textbf{more stable training}}
-        \end{itemize}
-    \end{block}
-    
-    \vspace{0.8cm}
-    
-    \begin{alertblock}{Why This Matters}
-        This decomposition explains SOCM's empirical success:
-        \begin{enumerate}
-            \item \textcolor{blue}{\textbf{Theoretical equivalence:}} Same optimum as proven CE methods
-            \item \textcolor{red}{\textbf{Practical advantage:}} Explicit variance control improves optimization
-            \item \textcolor{ForestGreen}{\textbf{Best of both worlds:}} CE's guarantees + diffusion models' stability
-        \end{enumerate}
-    \end{alertblock}
-    
-\end{frame}
-\end{comment}
-
-
 
 \begin{frame}{SOCM Algorithm}
     \begin{figure}
@@ -979,13 +862,15 @@
 \section{Conclusion}
 
 \begin{frame}{Conclusion}
-    \begin{block}{Paper's conclusion}
-    peepee
-    \end{block}
 
-    \begin{alertblock}{Personal thoughts}
-    poopoo
-    \end{alertblock}
+    \begin{block}{Personal thoughts and conclusion}
+
+    Knowing that SOC formulations can be applied in many ML problems such as conditional sampling on diffusion and flow models or even sampling from unnormalized densities and rare events having a stable and reliable method to solve SOC problems using SOCM opens up new avenues for research and application.
+    \\
+    \vspace{0.2cm}
+    Additionally, I would love to come back to this paper in the next year after having aquired a proper fondation in stochastic calculus, partial differential equations statistical mechanics.
+
+    \end{block}
 
     \note{The main roadblock when we try to apply SOCM to more challenging problems is that the variance of the
         factor alpha(v, Xv, B) explodes when f and/or g are large, or when the dimension d is high. The control L2 error
