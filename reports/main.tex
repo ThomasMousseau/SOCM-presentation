@@ -47,18 +47,22 @@
 %------------------------------------------------
 \section{Setup and Preliminaries}
 
-\begin{frame}{Evolution of Generative Models}
+\begin{frame}{Generative Models}
     \begin{center}
         \begin{minipage}{0.9\textwidth}
+
+            \begin{block}{The Core Challenge: Unnormalized Densities}
+                Generative models must sample from complex distributions $p_{\text{data}}(x) = \frac{1}{Z} \tilde{p}_{\text{data}}(x)$ where the normalization constant $Z = \int \tilde{p}_{\text{data}}(x) dx$ is intractable to compute. This intractability arises from the curse of dimensionality when integrating over high-dimensional spaces.
+            \end{block}
+
             \vspace{0.3cm}
-            
-            \small
-            \begin{tabular}{@{}l@{\hspace{0.8cm}}p{0.75\textwidth}@{}}
-                \textbf{2020} & \textbf{DDPM:} Denoising Diffusion Probabilistic Models interpret generation as reversing a discrete noise-adding process, learning to denoise at each step. They produced high-quality samples but required thousands of slow sampling steps. \\[0.4cm]
+
+            \begin{tabular}{@{}l@{\hspace{0.8cm}}p{0.85\textwidth}@{}}
+                \textbf{2020} & \textbf{DDPM:} Denoising Diffusion Probabilistic Models interpret generation as reversing a discrete noise-adding process, learning to denoise at each step. They produced high-quality samples but required thousands of slow sampling steps. \\[0.2cm]
                 
-                \textbf{2021} & \textbf{Score-based Models:} Score-based generative models extended diffusion to continuous-time SDEs, learning the score function ($\nabla_x \log p_t(x)$) to reverse a stochastic diffusion process. This unified diffusion with stochastic control, allowed probability flow ODEs, and sped up sampling. \\[0.4cm]
+                % \textbf{2021} & \textbf{Score-based Models:} Score-based generative models extended diffusion to continuous-time SDEs, learning the score function ($\nabla_x \log p_t(x)$) to reverse a stochastic diffusion process. This unified diffusion with stochastic control, allowed probability flow ODEs, and sped up sampling. \\[0.4cm]
                 
-                \textbf{2023} & \textbf{Flow Matching:} Flow matching views generation as learning a deterministic ODE vector field that directly transports a simple distribution (e.g., Gaussian) to data. This removed stochasticity and significantly improved efficiency compared to diffusion/score methods. \\[0.4cm]
+                \textbf{2023} & \textbf{Flow Matching:} Flow matching views generation as learning a deterministic ODE vector field that directly transports a simple distribution (e.g., Gaussian) to data. This removed stochasticity and significantly improved efficiency compared to diffusion/score methods. \\[0.2cm]
             \end{tabular}
             
             \vspace{0.3cm}
@@ -68,17 +72,13 @@
 
 \begin{frame}{SOC as the Foundation of Generative Models}
     \vspace{-0.3cm}
-    \begin{block}{The Core Challenge: Unnormalized Densities}
-        Generative models must sample from complex distributions $p_{\text{data}}(x) = \frac{1}{Z} \tilde{p}_{\text{data}}(x)$ where the normalization constant $Z = \int \tilde{p}_{\text{data}}(x) dx$ is intractable to compute. This intractability arises from the curse of dimensionality when integrating over high-dimensional spaces.
-    \end{block}
+    % \begin{block}{The Core Challenge: Unnormalized Densities}
+    %     Generative models must sample from complex distributions $p_{\text{data}}(x) = \frac{1}{Z} \tilde{p}_{\text{data}}(x)$ where the normalization constant $Z = \int \tilde{p}_{\text{data}}(x) dx$ is intractable to compute. This intractability arises from the curse of dimensionality when integrating over high-dimensional spaces.
+    % \end{block}
 
-    \vspace{-0.3cm}
+    % \vspace{-0.3cm}
 
-    \begin{columns}[t]
-        \column{0.48\textwidth}
         \begin{alertblock}{SOC Connection}
-            \small
-            \textbf{Key Insight:} \\
             Transform tractable distributions (Gaussian) to complex target distributions through \textcolor{blue}{optimal control policies}.
             
             \vspace{0.3cm}
@@ -88,32 +88,16 @@
                 \item Simple sampling (easy)
                 \item Complex data distributions (hard)
             \end{itemize}
+
+            From Langevin dynamics to modern diffusion models, all major breakthroughs in generative modeling can be understood through the lens of stochastic optimal control theory.
+
         \end{alertblock}
         
-        \column{0.48\textwidth}
-        \begin{block}{Modern Implementations}
-            \small
-            
-            \textbf{Diffusion Models:} \\
-            $u_t = -\frac{1}{2}\nabla_x \log p_t(x)$ (denoising)
-            
-            \vspace{0.2cm}
-            \textbf{Score-based Models:} \\
-            $u_t = \nabla_x \log p_t(x)$ (score function)
-            
-            \vspace{0.2cm}
-            \textbf{Flow Matching:} \\
-            $u_t = \frac{x_1 - x_0}{T-t}$ (deterministic flow)
-            
-            All learn \textcolor{blue}{optimal control policies} to transport distributions!
-        \end{block}
-    \end{columns}
-
-    \note{
-    \textcolor{blue}{\textbf{Unnormalized Densities:}} The fundamental challenge in generative modeling is sampling from distributions $p(x) = \frac{1}{Z}e^{-E(x)}$ where $Z$ is unknown. SOC provides the mathematical framework to construct sampling procedures. \\
-    \vspace{0.1cm}
-    \textcolor{orange}{\textbf{Historical Context:}} From Langevin dynamics to modern diffusion models, all major breakthroughs in generative modeling can be understood through the lens of stochastic optimal control theory.
-    }
+    % \note{
+    % \textcolor{blue}{\textbf{Unnormalized Densities:}} The fundamental challenge in generative modeling is sampling from distributions $p(x) = \frac{1}{Z}e^{-E(x)}$ where $Z$ is unknown. SOC provides the mathematical framework to construct sampling procedures. \\
+    % \vspace{0.1cm}
+    % \textcolor{orange}{\textbf{Historical Context:}} From Langevin dynamics to modern diffusion models, all major breakthroughs in generative modeling can be understood through the lens of stochastic optimal control theory.
+    % }
 \end{frame}
 
 \begin{frame}{What is a Stochastic Control Problem?}
@@ -135,7 +119,7 @@
             
             \vspace{0.3cm}
             
-            \textbf{Control Term:} $\sigma(t)u(X_t^u, t) \in \mathbb{R}^d$ (how control influences the system)
+            \textbf{Control Term:} $u(X_t^u, t) \in \mathbb{R}^d$ (how control influences the system)
             
             \vspace{0.3cm}
             
@@ -149,12 +133,12 @@
             
             \textbf{Noise Intensity:} $\lambda > 0$ (controls the strength of stochastic perturbations)
 
-    \note{
-    \textcolor{blue}{\textbf{Control-Affine Structure:}} The "control-affine" property means the control $u$ enters linearly (affinely) in the drift term. This is the most general practical form for controlled SDEs, encompassing most applications in finance, robotics, and machine learning. \\    
-    \vspace{0.1cm}
+%     \note{
+%     \textcolor{blue}{\textbf{Control-Affine Structure:}} The "control-affine" property means the control $u$ enters linearly (affinely) in the drift term. This is the most general practical form for controlled SDEs, encompassing most applications in finance, robotics, and machine learning. \\    
+%     \vspace{0.1cm}
 
-   \textcolor{red}{Je dois aussi expliquer l'importance que le steering input ainsi que le noise sont tous les 2 multipliés par sigma(t) ce qui signifie que ...}
-    }
+%    \textcolor{red}{Je dois aussi expliquer l'importance que le steering input ainsi que le noise sont tous les 2 multipliés par sigma(t) ce qui signifie que ...}
+%     }
 \end{frame}
 
 \begin{frame}{The Optimal Control Objective}
@@ -183,9 +167,9 @@
             
              \textbf{Control Space:} $\mathcal{U}$ (set of admissible control policies)
 
-    \note{
+    % \note{
 
-    }
+    % }
     
 \end{frame}
 
@@ -203,9 +187,9 @@
             \midrule
             \textbf{Control $u_t$} & Steering angle, throttle & Denoising direction & Flow velocity field \\
             \midrule
-            \textbf{Dynamics Source} & \textcolor{blue}{Newtonian mechanics} (vehicle dynamics) & \textcolor{orange}{Forward noising} process & \textcolor{ForestGreen}{No natural drift} (learnable) \\
+            \textbf{Dynamics Source} & \textcolor{blue}{Newtonian mechanics} & \textcolor{orange}{Forward noising process} & \textcolor{ForestGreen}{No natural drift} (learnable) \\
             \midrule
-            \textbf{Drift $b(X_t,t)$} & Kinematic equations & Predetermined schedule & $b = 0$ (control learns drift) \\
+            \textbf{Drift $b(X_t,t)$} & Vehicle dynamics & Predetermined schedule & $b = 0$ (control learns drift) \\
             \midrule
             \textbf{Control Goal} & Reach target safely & Reverse noise process & Transport distributions \\
             \midrule
@@ -220,13 +204,13 @@
         \textbf{Same mathematical framework, different physics:} SOC unifies vehicle control, generative modeling, and distribution transport under a single theoretical umbrella.
     \end{alertblock}
 
-    \note{
-    \textcolor{blue}{\textbf{Steering Actuator:}} The dynamics come from well-established physics - Newton's laws, kinematics, and vehicle dynamics. The control optimizes safety and efficiency. \\
-    \vspace{0.1cm}
-    \textcolor{orange}{\textbf{Diffusion Models:}} The drift is determined by the forward noising process (e.g., $\beta(t)$), and control learns to reverse this predetermined corruption. \\
-    \vspace{0.1cm}
-    \textcolor{ForestGreen}{\textbf{Flow Models:}} No natural drift exists - the control $u_t$ directly becomes the drift term, learning the entire velocity field that transports distributions.
-    }
+    % \note{
+    % \textcolor{blue}{\textbf{Steering Actuator:}} The dynamics come from well-established physics - Newton's laws, kinematics, and vehicle dynamics. The control optimizes safety and efficiency. \\
+    % \vspace{0.1cm}
+    % \textcolor{orange}{\textbf{Diffusion Models:}} The drift is determined by the forward noising process (e.g., $\beta(t)$), and control learns to reverse this predetermined corruption. \\
+    % \vspace{0.1cm}
+    % \textcolor{ForestGreen}{\textbf{Flow Models:}} No natural drift exists - the control $u_t$ directly becomes the drift term, learning the entire velocity field that transports distributions.
+    % }
 \end{frame}
 
 %------------------------------------------------
@@ -333,7 +317,6 @@
                 \item \textcolor{red}{\textbf{Non-convex landscape:}} Full of local minima
                 \item \textcolor{red}{\textbf{Unstable training:}} Difficult optimization
                 \item \textcolor{red}{\textbf{No guarantees:}} May not find global optimum
-                \item \textcolor{red}{\textbf{Sensitive initialization:}} Results vary significantly
             \end{itemize}
         \end{alertblock}
     \end{columns}
@@ -393,18 +376,18 @@
         \end{block}
     \end{columns}
         
-    \note{
-    \textbf{Insight:} Apply the same principle to SOC! Replace non-convex adjoint methods with \textcolor{blue}{\textbf{least-squares matching}}, creating a \textcolor{ForestGreen}{\textbf{convex optimization landscape}} for stochastic optimal control.
-    \\
-    \vspace{0.1cm}
-    \textcolor{orange}{\textbf{Historical Parallel:}} Continuous Normalizing Flows (CNFs) suffered from the same optimization challenges as traditional SOC - they used adjoint methods and had non-convex landscapes. DDPMs revolutionized generative modeling by reformulating the problem as least-squares regression. \\
-    \vspace{0.1cm}
-    \textcolor{blue}{\textbf{SOCM's Contribution:}} SOCM brings the same insight to stochastic optimal control, replacing direct optimization with least-squares matching to achieve stable, convex optimization.
-    }
+    % \note{
+    % \textbf{Insight:} Apply the same principle to SOC! Replace non-convex adjoint methods with \textcolor{blue}{\textbf{least-squares matching}}, creating a \textcolor{ForestGreen}{\textbf{convex optimization landscape}} for stochastic optimal control.
+    % \\
+    % \vspace{0.1cm}
+    % \textcolor{orange}{\textbf{Historical Parallel:}} Continuous Normalizing Flows (CNFs) suffered from the same optimization challenges as traditional SOC - they used adjoint methods and had non-convex landscapes. DDPMs revolutionized generative modeling by reformulating the problem as least-squares regression. \\
+    % \vspace{0.1cm}
+    % \textcolor{blue}{\textbf{SOCM's Contribution:}} SOCM brings the same insight to stochastic optimal control, replacing direct optimization with least-squares matching to achieve stable, convex optimization.
+    % }
 \end{frame}
 
 
-\begin{frame}{SOCM in Context: Optimization Landscapes}
+\begin{frame}{Optimization Landscapes}
     \vspace{0.5cm}
     \begin{table}
         \centering
@@ -419,7 +402,7 @@
     \end{table}
 \end{frame}
 
-\begin{frame}{SOCM Framework: From Classical SOC to SOCM}
+\begin{frame}{From Classical SOC to SOCM}
     \small
     \begin{block}{Dynamics (Same for Both)}
         \begin{equation}
@@ -451,11 +434,11 @@
     \begin{block}{Where:}
             $u : \mathbb{R}^d \times [0,1] \rightarrow \mathbb{R}^d$ is the \textcolor{blue}{\textbf{control}} (policy being learned)
             \vspace{0.1cm} \\
-            $v$ is a \textcolor{orange}{\textbf{fixed arbitrary control}}, $X^v$ is the solution of the SDE with control $v$
+            $v: \mathbb{R}^d$ is a \textcolor{orange}{\textbf{fixed arbitrary control}}, $X^v$ is the solution of the SDE with control $v$
             \vspace{0.1cm} \\
             $M : [0,1]^2 \rightarrow \mathbb{R}^{d \times d}$ is the \textcolor{red}{\textbf{reparameterization matrix}}
             \vspace{0.1cm} \\
-            $w$ is the \textcolor{ForestGreen}{\textbf{matching vector field}} (target for $u$ to match)
+            $w: $ is the \textcolor{ForestGreen}{\textbf{matching vector field}} (target for $u$ to match)
             \vspace{0.1cm} \\
             $\alpha$ is the \textcolor{purple}{\textbf{importance weight}} (for measure correction)
     \end{block}
@@ -464,18 +447,18 @@
         $w$ and $\alpha$ depend on $f$, $g$, $\lambda$, $\sigma$
     \end{alertblock}
 
-    \note{
-    \textcolor{blue}{\textbf{Control $u$:}} This is what we're trying to learn - the optimal policy that minimizes our cost function. \\
-    \vspace{0.1cm}
-    \textcolor{orange}{\textbf{Arbitrary Control $v$:}} Used to generate sample trajectories for training. The choice of $v$ affects the efficiency but not the correctness of SOCM. \\
-    \vspace{0.1cm}
-    \textcolor{red}{\textbf{Reparameterization Matrix $M$:}} Jointly optimized with $u$ to reduce variance in the gradient estimation through path-wise reparameterization.
-    }
+    % \note{
+    % \textcolor{blue}{\textbf{Control $u$:}} This is what we're trying to learn - the optimal policy that minimizes our cost function. \\
+    % \vspace{0.1cm}
+    % \textcolor{orange}{\textbf{Arbitrary Control $v$:}} Used to generate sample trajectories for training. The choice of $v$ affects the efficiency but not the correctness of SOCM. \\
+    % \vspace{0.1cm}
+    % \textcolor{red}{\textbf{Reparameterization Matrix $M$:}} Jointly optimized with $u$ to reduce variance in the gradient estimation through path-wise reparameterization.
+    % }
 \end{frame}
 
 
 
-\begin{frame}{Matching Vector Field (1/2)}
+\begin{frame}{Presenting Matching Vector Field}
     \vspace{-0.3cm}
     
     \begin{block}{Reparameterization Function $w(t, v, X^v, B, M_t)$}
@@ -499,7 +482,7 @@
 
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Matching Vector Field (2/2) - Path Integral}
+\begin{frame}[allowframebreaks]{Matching Vector Field (1/3) - Path Integral}
     \vspace{-0.3cm}
     
     % Make section titles more prominent
@@ -560,31 +543,29 @@
     $$\frac{\partial \phi}{\partial t} + L\phi + \frac{1}{\lambda}f\phi = 0, \quad \phi(x,T) = e^{-g(x)/\lambda}$$
 
     \textbf{Feynman-Kac applied to $\phi$:}
-    $$\phi(x,t) = \mathbb{E}_0\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right] \text{ (uncontrolled SDE)}$$
-
-    \textbf{Converting back:} $V(x,t) = -\lambda \log \phi(x,t)$
+    $$\phi(x,t) = \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right] \text{ (uncontrolled SDE)}$$
     
     \vspace{0.8cm}
     
     \subsection*{Result: Lemma 1}
     
-    Set $Z(x,t) := \phi(x,t)$, so the \textcolor{orange}{\textbf{partition function}} is:
-    $$Z(x,t) = \mathbb{E}_0\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+    Set $V(x,t) := \phi(x,t)$, so the \textcolor{orange}{\textbf{partition function}} is:
+    $$V(x,t) = \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
     
     Then the optimal control becomes:
 
     \begin{alertblock}{Path-integral Optimal Control}
-        $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log Z(x,t)$$
-        $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log \mathbb{E}_0\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+        % $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log Z(x,t)$$
+        $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
 
-        \footnotesize{$\nabla_x$ is the gradient w.r.t. the initial condition $X_t = x$, not a terminal-state score.}
+        % \footnotesize{$\nabla_x$ is the gradient w.r.t. the initial condition $X_t = x$, not a terminal-state score.}
     \end{alertblock}
     
-    \vspace{-0.3cm}
+    % \vspace{-0.1cm}
 
     \begin{block}{Why This Matters}
-        \textbf{Key Achievement:} We eliminate $V$ to avoid solving a nonlinear PDE and reframe the control as a \textcolor{blue}{\textbf{score function}} $\nabla_x \log Z(x,t)$.
-        
+        \textbf{Key Achievement:} We eliminate $V$ to avoid solving a nonlinear PDE and reframe the control as a \textcolor{blue}{\textbf{score function}} $\nabla_x \log \mathbb{E}[ . | X_t = x]$.
+
         \vspace{0.3cm}
         
         We avoid solving a nonlinear PDE and instead target a score that admits a pathwise estimator (next slide). This sets up a score we can approximate with a \textcolor{ForestGreen}{\textbf{low-variance pathwise estimator}} in Step 2, which will become the matching vector field $w$. This is the foundation for SOCM's \textcolor{red}{\textbf{least-squares matching}} approach.
@@ -599,8 +580,9 @@
     \Large\textcolor{red}{\textbf{Step 2 — Rendering $u^*$ Trackable using Pathwise reparameterization (under the \emph{uncontrolled} law)}}
     \end{center}
 
-    \begin{block}{The Hypothetical Scenario}
-        \textbf{What if} we could compute the optimal control $u^*(X_t, t)$ during training? We would simply minimize the $L_2$ distance between our learned control $u$ and the true optimum $u^*$.
+    \begin{block}{Reasons Why $u^*$ is not Trackable}
+        Je dois expliquer pourquoi on ne peut pas prendre u optimal directement.
+        % \textbf{What if} we could compute the optimal control $u^*(X_t, t)$ during training? We would simply minimize the $L_2$ distance between our learned control $u$ and the true optimum $u^*$.
     \end{block}
     
     \vspace{0.5cm}
@@ -653,6 +635,11 @@
     
     Using the path-integral representation from Step 1, we can transform the problematic cross term:
     
+        \begin{block}{Reminder: Path-integral Optimal Control}
+        $$u^*(x,t) = \lambda \, \sigma^\top(t) \, \nabla_x \log \mathbb{E}\left[\exp\left(-\frac{1}{\lambda}\int_t^T f(X_s,s) ds - \frac{1}{\lambda} g(X_T)\right) \,\middle|\, X_t = x\right]$$
+
+    \end{block}
+
     \begin{equation}
     \begin{aligned}
     &\mathbb{E}\left[\frac{1}{T}\int_0^T \langle u(X_t,t), u^*(X_t,t)\rangle dt \exp\left(-\lambda^{-1}\int_0^T f(X_t,t) dt - \lambda^{-1}g(X_T)\right)\right] \\[8pt]
@@ -865,10 +852,13 @@
 
     \begin{block}{Personal thoughts and conclusion}
 
-    Knowing that SOC formulations can be applied in many ML problems such as conditional sampling on diffusion and flow models or even sampling from unnormalized densities and rare events having a stable and reliable method to solve SOC problems using SOCM opens up new avenues for research and application.
+    SOCM is a framework grounded in theory that has shown interesting empirical results in specific benchmarks, but to truly judge its potential further application of this framework needs to be explored. 
     \\
     \vspace{0.2cm}
-    Additionally, I would love to come back to this paper in the next year after having aquired a proper fondation in stochastic calculus, partial differential equations statistical mechanics.
+    This said the authors seems to have already identified a few difficulties with this approach being the high variance related to the factor alpha(v, Xv, B) due to a mismatch between the probability measures induced by the learned control and the optimal control. This is a problem that is also encountered in out-of-distribution generalization for reinforcement learning.
+    \\
+    \vspace{0.2cm}
+    Additionally, I would love to come back to this paper in the next year after having acquired a proper foundation in stochastic calculus, partial differential equations, and statistical mechanics.
 
     \end{block}
 
