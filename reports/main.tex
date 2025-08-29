@@ -193,16 +193,13 @@
             \midrule
             \textbf{Control Goal} & Reach target safely & Reverse noise process & Transport distributions \\
             \midrule
-            \textbf{Noise $\sqrt{\lambda}\sigma dB_t$} & Road disturbances & Brownian motion & Optional stochasticity \\
+            \textbf{Noise $\sqrt{\lambda}\sigma dB_t$} & Road disturbances & Brownian motion & - \\
             \bottomrule
         \end{tabular}
     \end{table}
     
     \vspace{0.3cm}
-    
-    \begin{alertblock}{Key Insight}
-        \textbf{Same mathematical framework, different physics:} SOC unifies vehicle control, generative modeling, and distribution transport under a single theoretical umbrella.
-    \end{alertblock}
+
 
     % \note{
     % \textcolor{blue}{\textbf{Steering Actuator:}} The dynamics come from well-established physics - Newton's laws, kinematics, and vehicle dynamics. The control optimizes safety and efficiency. \\
@@ -498,7 +495,7 @@
     $$V(x, t) = \min_{u} \mathbb{E}\left[ \int_{t}^{t+h} \left( \frac{1}{2} \|u_s\|^2 + f(X_s, s) \right) ds + V(X_{t+h}, t+h) \,\Big|\, X_t = x \right]$$
     
     \vspace{0.2cm}
-    \textbf{Based on Itô's lemma}
+    \textbf{Based on Itô's lemma (chain rule for stochastic calculus)}
 
     Expand $V(X_{t+h}, t+h)$ using Itô's lemma:
     $$dV = \partial_t V \, ds + \nabla V^\top dX_s + \frac{1}{2} \text{tr}[\sigma\sigma^\top \nabla^2 V] \lambda \, ds.$$
@@ -621,7 +618,7 @@
     \vspace{0.5cm}
     
     \begin{alertblock}{The Fundamental Challenge}
-        \textbf{We cannot compute $u^*(X_t,t)$ directly!} This is exactly why we need SOCM's matching approach - to find a computable target $w$ that serves as a proxy for $u^*$.
+        \textbf{We cannot compute $u^*(X_t,t)$ directly!} This is exactly why we need SOCM's matching approach, to find a computable target $w$ that serves as a proxy for $u^*$.
     \end{alertblock}
 
         \begin{block}{Why Focus on the Cross Term?}
